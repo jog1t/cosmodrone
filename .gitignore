@@ -3,8 +3,6 @@ dist/
 .DS_Store
 coverage/
 *.tsbuildinfo
-.vercel/
 apps/server/.rivet/
 apps/server/data/
 apps/server/dev.db*
-.vercel
