@@ -1,4 +1,4 @@
-import { registry } from "./rivet/actors.ts";
+import { registry } from "./rivet/actors";
 
 registry.startRunner();
 

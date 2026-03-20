@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently -n web,server -c cyan,green \"pnpm --filter web dev\" \"pnpm --filter server dev\"",
     "build": "pnpm --filter web build && pnpm --filter server build",
+    "build:vercel": "pnpm build && node scripts/prepare-vercel.mjs",
     "lint": "pnpm --filter web lint && pnpm --filter server lint",
     "format": "pnpm --filter web format && pnpm --filter server format",
     "test": "pnpm --filter web test && pnpm --filter server test",

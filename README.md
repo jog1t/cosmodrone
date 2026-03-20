@@ -17,7 +17,7 @@ Multiplayer game scaffold with a Vite + React + Tailwind frontend and a RivetKit
 
 ## Deployment
 
-- Vercel production deploys run from `.github/workflows/vercel-deploy.yml` and deploy both `apps/web` and `apps/server` as separate Vercel projects
+- Vercel production deploys run from `.github/workflows/vercel-deploy.yml` and publish the frontend from `apps/web`
 - Rivet managed runner deploys run from `.github/workflows/rivet-deploy.yml` using `rivet-dev/deploy-action@v1`
 - PR preview namespaces for Vercel are configured by `.github/workflows/rivet-preview.yml` using `rivet-dev/preview-namespace-action@v1`
 
@@ -25,16 +25,13 @@ Multiplayer game scaffold with a Vite + React + Tailwind frontend and a RivetKit
 
 - `RIVET_CLOUD_TOKEN`
 - `VERCEL_TOKEN`
-- `VERCEL_WEB_ORG_ID`
-- `VERCEL_WEB_PROJECT_ID`
-- `VERCEL_SERVER_ORG_ID`
-- `VERCEL_SERVER_PROJECT_ID`
-- `RIVET_ENDPOINT_PRODUCTION`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
 - `RIVET_PUBLIC_ENDPOINT_PRODUCTION`
 
 ### Notes
 
 - The frontend reads `RIVET_PUBLIC_ENDPOINT` at build time and falls back to `/api/rivet` for local development
 - The Docker image for Rivet Cloud runs `pnpm --filter server start:runner`, which starts the actor runner without the local dev HTTP server
-- The Hono app is exported from `apps/server/src/app.ts` for Vercel and still runs locally via `apps/server/src/server.ts`
-- For local manual Vercel deploys, use `vercel --cwd apps/web` and `vercel --cwd apps/server`
+- The single Vercel deployment is the web app; the backend runtime itself deploys to Rivet Cloud
+- For local manual Vercel deploys, use `vercel --cwd apps/web`

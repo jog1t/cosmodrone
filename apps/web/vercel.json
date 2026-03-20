@@ -2,5 +2,11 @@
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter web build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/((?!api/|health$|assets/|favicon.svg$|icons.svg$).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
