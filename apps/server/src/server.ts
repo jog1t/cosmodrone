@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { registry } from "./rivet/actors.js";
+import { registry } from "./rivet/actors";
 
 const app = new Hono();
 
