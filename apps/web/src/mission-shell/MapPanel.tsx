@@ -1,11 +1,20 @@
 import { useRef } from "react";
-import { droneLabels, mapStatusLabels } from "./data";
+import { getPowerBusLevel, getRouteState, getUplinkState, type WorldState } from "./simulation";
 import { useMissionMapCanvas } from "./useMissionMapCanvas";
 
-export function MapPanel() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+type MapPanelProps = {
+  world: WorldState;
+};
 
-  useMissionMapCanvas(canvasRef);
+export function MapPanel({ world }: MapPanelProps) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const statusLabels = [
+    `POWER BUS :: ${getPowerBusLevel(world.tick)}%`,
+    `UPLINK :: ${getUplinkState(world.tick)}`,
+    `SIM :: ${getRouteState(world.tick, world.runState)}`,
+  ];
+
+  useMissionMapCanvas(canvasRef, world);
 
   return (
     <section className="grid min-h-0 grid-rows-[minmax(0,1fr)] bg-[#040d15]">
@@ -15,9 +24,9 @@ export function MapPanel() {
             map renderer
           </p>
           <div className="mission-mono flex gap-4 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-            <span>base aurora</span>
-            <span>3 drones</span>
-            <span>4 ore nodes</span>
+            <span>{world.base.name.toLowerCase()}</span>
+            <span>{world.drones.length} drone</span>
+            <span>{world.oreDeposits.length} ore node</span>
           </div>
         </div>
 
@@ -28,7 +37,7 @@ export function MapPanel() {
           />
 
           <div className="pointer-events-none absolute left-6 top-6 grid gap-2">
-            {mapStatusLabels.map((label) => (
+            {statusLabels.map((label) => (
               <div
                 key={label}
                 className="mission-mono border border-cyan-400/15 bg-[#03111b]/95 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-cyan-100"
@@ -39,12 +48,12 @@ export function MapPanel() {
           </div>
 
           <div className="pointer-events-none absolute bottom-6 left-6 flex gap-2">
-            {droneLabels.map(([code, label]) => (
+            {world.drones.map((drone) => (
               <div
-                key={code}
+                key={drone.id}
                 className="mission-mono border border-cyan-400/15 bg-[#03111b]/95 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-cyan-100"
               >
-                {code} :: {label}
+                {drone.id.toUpperCase()} :: HOLDING AT ({drone.position.x},{drone.position.y})
               </div>
             ))}
           </div>

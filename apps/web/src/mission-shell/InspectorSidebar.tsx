@@ -1,6 +1,20 @@
-import { inspectorStats } from "./data";
+import { selectDrone, type WorldState } from "./simulation";
 
-export function InspectorSidebar() {
+type InspectorSidebarProps = {
+  world: WorldState;
+};
+
+export function InspectorSidebar({ world }: InspectorSidebarProps) {
+  const drone = selectDrone(world);
+  const inspectorStats = [
+    ["Battery", `${drone.battery} / 100`],
+    ["Cargo", `${drone.cargo.ore} / ${drone.cargo.capacity} ore`],
+    ["Template", drone.template],
+    ["Position", `(${drone.position.x}, ${drone.position.y})`],
+    ["memory", `ore:${drone.memory.ore.x},${drone.memory.ore.y}`],
+    ["baseOre", `${world.base.oreStored}`],
+  ] as const;
+
   return (
     <aside className="grid min-h-0 grid-rows-[48px_minmax(0,1fr)] bg-[#061019]">
       <div className="flex items-center justify-between border-b border-cyan-400/15 px-4">
@@ -18,10 +32,10 @@ export function InspectorSidebar() {
             selected drone
           </p>
           <h2 className="mt-3 text-lg font-semibold uppercase tracking-[0.18em] text-slate-100">
-            Miner Alpha
+            {drone.name}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-300">
-            Readable per-drone state with battery, cargo, loadout, memory, and baseMemory.
+            Task 03 keeps the world deterministic while exposing central battery, cargo, memory, and map state.
           </p>
         </div>
 
@@ -41,7 +55,7 @@ export function InspectorSidebar() {
             warning channel
           </p>
           <p className="mt-2 text-sm uppercase tracking-[0.12em] text-amber-100">
-            battery faults pause simulation instantly
+            no actuators yet :: stepping only advances the shared world clock
           </p>
         </div>
       </div>

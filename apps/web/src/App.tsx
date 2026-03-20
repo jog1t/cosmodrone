@@ -4,10 +4,12 @@ import { AssemblerSidebar } from "./mission-shell/AssemblerSidebar";
 import { InspectorSidebar } from "./mission-shell/InspectorSidebar";
 import { MapPanel } from "./mission-shell/MapPanel";
 import { TopBar } from "./mission-shell/TopBar";
+import { useWorldSimulation } from "./mission-shell/useWorldSimulation";
 
 function App() {
   const [showInspector, setShowInspector] = useState(true);
   const [showAssembler, setShowAssembler] = useState(true);
+  const { world, reset, step, toggleRun } = useWorldSimulation();
 
   const mapColumns = `${showInspector ? "320px " : ""}minmax(0,1fr)${showAssembler ? " 420px" : ""}`;
 
@@ -17,6 +19,10 @@ function App() {
         <TopBar
           showAssembler={showAssembler}
           showInspector={showInspector}
+          world={world}
+          onReset={reset}
+          onStep={step}
+          onToggleRun={toggleRun}
           toggleAssembler={() => setShowAssembler((value) => !value)}
           toggleInspector={() => setShowInspector((value) => !value)}
         />
@@ -25,12 +31,12 @@ function App() {
           className="grid min-h-0 gap-[1px] bg-[rgba(86,156,214,0.18)]"
           style={{ gridTemplateColumns: mapColumns }}
         >
-          {showInspector ? <InspectorSidebar /> : null}
-          <MapPanel />
+          {showInspector ? <InspectorSidebar world={world} /> : null}
+          <MapPanel world={world} />
           {showAssembler ? <AssemblerSidebar /> : null}
         </div>
 
-        <BottomPanels />
+        <BottomPanels world={world} />
       </section>
     </main>
   );

@@ -1,6 +1,10 @@
-import { consoleLines, timeline } from "./data";
+import { type WorldState } from "./simulation";
 
-export function BottomPanels() {
+type BottomPanelsProps = {
+  world: WorldState;
+};
+
+export function BottomPanels({ world }: BottomPanelsProps) {
   return (
     <section className="grid min-h-0 grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-[1px] bg-[rgba(86,156,214,0.18)]">
       <article className="grid min-h-0 grid-rows-[48px_minmax(0,1fr)] bg-[#040d15]">
@@ -14,7 +18,7 @@ export function BottomPanels() {
         </div>
 
         <div className="mission-mono min-h-0 overflow-auto px-4 py-3 text-[12px] leading-7 text-emerald-200">
-          {consoleLines.map((line) => (
+          {world.consoleLines.map((line) => (
             <p key={line}>{line}</p>
           ))}
         </div>
@@ -32,7 +36,7 @@ export function BottomPanels() {
 
         <div className="min-h-0 overflow-auto p-3">
           <div className="grid gap-[1px] bg-cyan-400/10">
-            {timeline.map((entry) => (
+            {world.timeline.map((entry) => (
               <div
                 key={entry.tick}
                 className="grid grid-cols-[88px_minmax(0,1fr)] items-center bg-[#040d15] px-4 py-3"
