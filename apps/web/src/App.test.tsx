@@ -1,44 +1,24 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@rivetkit/react", () => ({
-  createRivetKit: () => ({
-    useActor: () => ({
-      connStatus: "connected",
-      connection: {
-        getSnapshot: vi.fn().mockResolvedValue({
-          phase: "lobby",
-          roomCode: "hangar-alpha",
-          population: 1,
-          players: {
-            "pilot-test": {
-              x: 50,
-              y: 50,
-              vx: 0,
-              vy: 0,
-              hue: 180,
-              ready: false,
-              online: true,
-              displayName: "Pilot TEST",
-            },
-          },
-        }),
-        syncVector: vi.fn(),
-        toggleReady: vi.fn(),
-      },
-      useEvent: vi.fn(),
-    }),
-  }),
+vi.mock("@monaco-editor/react", () => ({
+  default: ({ defaultValue }: { defaultValue?: string }) => (
+    <div data-testid="monaco-editor">{defaultValue}</div>
+  ),
 }));
 
 import App from "./App";
 
 describe("App", () => {
-  it("renders the scaffold headline and workspace commands", () => {
+  it("renders the puzzle mode shell", () => {
     render(<App />);
 
-    expect(screen.getByText(/Rivet-powered dogfight scaffolding/i)).toBeInTheDocument();
-    expect(screen.getByText("`pnpm dev`", { exact: true })).toBeInTheDocument();
-    expect(screen.getByText(/Shared drone room actor/i)).toBeInTheDocument();
+    expect(screen.getByText(/First loop command deck/i)).toBeInTheDocument();
+    expect(screen.getByText(/map renderer/i)).toBeInTheDocument();
+    expect(screen.getByTestId("monaco-editor")).toBeInTheDocument();
+    expect(screen.getByText(/miner-alpha.ts/i)).toBeInTheDocument();
+    expect(screen.getByText(/runtime feedback/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /tab inspector/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /shift\+a assembler/i })).toBeInTheDocument();
   });
 });
