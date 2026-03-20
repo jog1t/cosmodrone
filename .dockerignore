@@ -1,0 +1,10 @@
+node_modules
+.git
+.github
+dist
+coverage
+docs
+apps/web
+apps/server/.rivet
+apps/server/data
+apps/server/dev.db*

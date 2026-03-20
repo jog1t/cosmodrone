@@ -1,0 +1,96 @@
+name: Vercel Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Pull Vercel web project settings
+        run: vercel pull --cwd apps/web --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_WEB_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
+
+      - name: Build Vercel web artifacts
+        run: vercel build --cwd apps/web --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          RIVET_PUBLIC_ENDPOINT: ${{ secrets.RIVET_PUBLIC_ENDPOINT_PRODUCTION }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_WEB_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
+
+      - name: Deploy web to Vercel
+        run: vercel deploy --cwd apps/web --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_WEB_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
+
+  deploy-server:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Pull Vercel server project settings
+        run: vercel pull --cwd apps/server --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_SERVER_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_SERVER_PROJECT_ID }}
+
+      - name: Build Vercel server artifacts
+        run: vercel build --cwd apps/server --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          RIVET_ENDPOINT: ${{ secrets.RIVET_ENDPOINT_PRODUCTION }}
+          RIVET_PUBLIC_ENDPOINT: ${{ secrets.RIVET_PUBLIC_ENDPOINT_PRODUCTION }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_SERVER_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_SERVER_PROJECT_ID }}
+
+      - name: Deploy Hono app to Vercel
+        run: vercel deploy --cwd apps/server --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_SERVER_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_SERVER_PROJECT_ID }}
