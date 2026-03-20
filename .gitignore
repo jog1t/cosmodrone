@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.DS_Store
+coverage/
+*.tsbuildinfo
+apps/server/.rivet/
+apps/server/data/
+apps/server/dev.db*

@@ -1,0 +1,6 @@
+packages:
+  - apps/web
+  - apps/server
+onlyBuiltDependencies:
+  - cbor-extract
+  - esbuild
