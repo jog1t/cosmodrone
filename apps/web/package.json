@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint src --react-plugin --deny-warnings -c .oxlintrc.json",
     "format": "oxfmt --check src vite.config.ts -c .oxfmtrc.json",
+    "test": "vitest run",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,14 +19,18 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^24.12.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.0.1",
     "oxfmt": "^0.41.0",
     "oxlint": "^1.56.0",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
-    "vite": "^8.0.1"
+    "vite": "^8.0.1",
+    "vitest": "^4.1.0"
   }
 }

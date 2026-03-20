@@ -1,7 +1,7 @@
 import { actor, event, setup } from "rivetkit";
 
-const GRID_SIZE = 100;
-const ROOM_CAPACITY = 8;
+export const GRID_SIZE = 100;
+export const ROOM_CAPACITY = 8;
 
 type FlightVector = {
   x: number;
@@ -27,17 +27,17 @@ type PilotParams = {
   displayName: string;
 };
 
-function clamp(value: number, min: number, max: number): number {
+export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-function hashHue(seed: string): number {
+export function hashHue(seed: string): number {
   let total = 0;
   for (const char of seed) total = (total + char.charCodeAt(0) * 17) % 360;
   return total;
 }
 
-function getSnapshot(roomCode: string, players: Record<string, FlightVector>): RoomSnapshot {
+export function getSnapshot(roomCode: string, players: Record<string, FlightVector>): RoomSnapshot {
   return {
     phase: Object.values(players).some((player) => player.ready) ? "live" : "lobby",
     roomCode,

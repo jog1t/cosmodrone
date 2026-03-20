@@ -8,7 +8,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "tsx src/server.ts",
     "lint": "oxlint src --deny-warnings -c .oxlintrc.json",
-    "format": "oxfmt --check src -c .oxfmtrc.json"
+    "format": "oxfmt --check src -c .oxfmtrc.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hono/node-ws": "^1.3.0",
@@ -20,6 +21,7 @@
     "oxfmt": "^0.41.0",
     "oxlint": "^1.56.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }
