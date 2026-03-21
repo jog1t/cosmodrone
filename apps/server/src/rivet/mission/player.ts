@@ -26,7 +26,11 @@ export const player = actor({
 
       return getMissionPlayerSnapshot(c.state);
     },
-    updateDroneScript: async (c, droneId: string, script: string): Promise<MissionPlayerSnapshot> => {
+    updateDroneScript: async (
+      c,
+      droneId: string,
+      script: string,
+    ): Promise<MissionPlayerSnapshot> => {
       if (!c.state.droneIds.includes(droneId)) {
         c.state.droneIds.push(droneId);
       }

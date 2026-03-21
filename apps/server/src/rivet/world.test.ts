@@ -18,8 +18,12 @@ describe("world actor", () => {
       "drone-2": "return idle",
     });
 
-    await client.drone.getOrCreate([sessionId, "drone-1"]).configureBehavior({ responseDelayMs: 5 });
-    await client.drone.getOrCreate([sessionId, "drone-2"]).configureBehavior({ responseDelayMs: 25 });
+    await client.drone
+      .getOrCreate([sessionId, "drone-1"])
+      .configureBehavior({ responseDelayMs: 5 });
+    await client.drone
+      .getOrCreate([sessionId, "drone-2"])
+      .configureBehavior({ responseDelayMs: 25 });
 
     const snapshot = await client.world.getOrCreate([sessionId]).runTick();
 
@@ -27,8 +31,16 @@ describe("world actor", () => {
     expect(snapshot.phase).toBe("resolved");
     expect(snapshot.waitingOn).toEqual([]);
     expect(snapshot.readyForNextTick).toBe(true);
-    expect(snapshot.responses["drone-1"]).toMatchObject({ tick: 1, droneId: "drone-1", status: "ok" });
-    expect(snapshot.responses["drone-2"]).toMatchObject({ tick: 1, droneId: "drone-2", status: "ok" });
+    expect(snapshot.responses["drone-1"]).toMatchObject({
+      tick: 1,
+      droneId: "drone-1",
+      status: "ok",
+    });
+    expect(snapshot.responses["drone-2"]).toMatchObject({
+      tick: 1,
+      droneId: "drone-2",
+      status: "ok",
+    });
   });
 
   it("marks non-responsive drones as timeout and still resolves the barrier", async (c) => {
@@ -47,8 +59,12 @@ describe("world actor", () => {
       "drone-slow": "return idle",
     });
 
-    await client.drone.getOrCreate([sessionId, "drone-fast"]).configureBehavior({ responseDelayMs: 0 });
-    await client.drone.getOrCreate([sessionId, "drone-slow"]).configureBehavior({ responseDelayMs: 60 });
+    await client.drone
+      .getOrCreate([sessionId, "drone-fast"])
+      .configureBehavior({ responseDelayMs: 0 });
+    await client.drone
+      .getOrCreate([sessionId, "drone-slow"])
+      .configureBehavior({ responseDelayMs: 60 });
 
     const snapshot = await client.world.getOrCreate([sessionId]).runTick();
 
@@ -56,8 +72,16 @@ describe("world actor", () => {
     expect(snapshot.phase).toBe("resolved");
     expect(snapshot.waitingOn).toEqual([]);
     expect(snapshot.readyForNextTick).toBe(true);
-    expect(snapshot.responses["drone-fast"]).toMatchObject({ tick: 1, droneId: "drone-fast", status: "ok" });
-    expect(snapshot.responses["drone-slow"]).toMatchObject({ tick: 1, droneId: "drone-slow", status: "timeout" });
+    expect(snapshot.responses["drone-fast"]).toMatchObject({
+      tick: 1,
+      droneId: "drone-fast",
+      status: "ok",
+    });
+    expect(snapshot.responses["drone-slow"]).toMatchObject({
+      tick: 1,
+      droneId: "drone-slow",
+      status: "timeout",
+    });
   });
 
   it("propagates drone execution errors back into world responses", async (c) => {

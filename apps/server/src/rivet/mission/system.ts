@@ -14,7 +14,10 @@ export const system = actor({
     droneIds: [] as string[],
   },
   actions: {
-    bootstrapSoloSession: async (c, input: MissionBootstrapInput): Promise<MissionSystemSnapshot> => {
+    bootstrapSoloSession: async (
+      c,
+      input: MissionBootstrapInput,
+    ): Promise<MissionSystemSnapshot> => {
       const sessionId = String(c.key[0] ?? "sandbox");
       const client = c.client<typeof registry>();
 
