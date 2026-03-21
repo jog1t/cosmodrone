@@ -31,7 +31,7 @@ Multiplayer game scaffold with a Vite + React + Tailwind frontend and a RivetKit
 
 ### Notes
 
-- The frontend reads `RIVET_PUBLIC_ENDPOINT` at build time and falls back to `/api/rivet` for local development
+- The frontend reads `RIVET_PUBLIC_ENDPOINT` at build time; when not set the endpoint is left empty (RivetKit defaults to the local dev server)
 - The Docker image for Rivet Cloud runs `pnpm --filter server start:runner`, which starts the actor runner without the local dev HTTP server
 - The single Vercel deployment is the web app; the backend runtime itself deploys to Rivet Cloud
 - For local manual Vercel deploys, use `vercel --cwd apps/web`
