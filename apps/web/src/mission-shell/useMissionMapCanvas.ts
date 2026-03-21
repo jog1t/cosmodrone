@@ -15,7 +15,9 @@ export function useMissionMapCanvas(
       const height = Math.max(320, Math.floor(rect.height || 320));
       const ratio = window.devicePixelRatio || 1;
       const tickPhase = ((world.tick % 8) + 1) / 8;
-      const tileSize = Math.floor(Math.min((width - 96) / world.map.width, (height - 96) / world.map.height));
+      const tileSize = Math.floor(
+        Math.min((width - 96) / world.map.width, (height - 96) / world.map.height),
+      );
       const boardWidth = tileSize * world.map.width;
       const boardHeight = tileSize * world.map.height;
       const originX = Math.floor((width - boardWidth) / 2);
@@ -73,10 +75,20 @@ export function useMissionMapCanvas(
 
       const base = toCanvasPoint(world.base.position.x, world.base.position.y);
       context.fillStyle = `rgba(34, 197, 94, ${0.08 + tickPhase * 0.12})`;
-      context.fillRect(base.x - tileSize * 0.38, base.y - tileSize * 0.38, tileSize * 0.76, tileSize * 0.76);
+      context.fillRect(
+        base.x - tileSize * 0.38,
+        base.y - tileSize * 0.38,
+        tileSize * 0.76,
+        tileSize * 0.76,
+      );
       context.strokeStyle = `rgba(74, 222, 128, ${0.35 + tickPhase * 0.35})`;
       context.lineWidth = 1.5;
-      context.strokeRect(base.x - tileSize * 0.38, base.y - tileSize * 0.38, tileSize * 0.76, tileSize * 0.76);
+      context.strokeRect(
+        base.x - tileSize * 0.38,
+        base.y - tileSize * 0.38,
+        tileSize * 0.76,
+        tileSize * 0.76,
+      );
 
       context.strokeStyle = `rgba(34, 211, 238, ${0.2 + tickPhase * 0.35})`;
       context.lineWidth = 2;
@@ -84,7 +96,9 @@ export function useMissionMapCanvas(
       context.arc(base.x, base.y, tileSize * (0.28 + tickPhase * 0.12), 0, Math.PI * 2);
       context.stroke();
 
-      const oreNodes = world.oreDeposits.map((deposit) => toCanvasPoint(deposit.position.x, deposit.position.y));
+      const oreNodes = world.oreDeposits.map((deposit) =>
+        toCanvasPoint(deposit.position.x, deposit.position.y),
+      );
 
       context.fillStyle = "#f59e0b";
       oreNodes.forEach(({ x, y }) => {
@@ -145,7 +159,13 @@ export function useMissionMapCanvas(
         context.strokeStyle = "rgba(56, 189, 248, 0.4)";
         context.lineWidth = 1;
         context.beginPath();
-        context.arc(dronePoint.x, dronePoint.y, tileSize * (0.34 + tickPhase * 0.05), 0, Math.PI * 2);
+        context.arc(
+          dronePoint.x,
+          dronePoint.y,
+          tileSize * (0.34 + tickPhase * 0.05),
+          0,
+          Math.PI * 2,
+        );
         context.stroke();
 
         context.fillStyle = "#02070d";

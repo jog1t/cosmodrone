@@ -35,7 +35,8 @@ export function InspectorSidebar({ world }: InspectorSidebarProps) {
             {drone.name}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-300">
-            Task 03 keeps the world deterministic while exposing central battery, cargo, memory, and map state.
+            Task 03 keeps the world deterministic while exposing central battery, cargo, memory, and
+            map state.
           </p>
         </div>
 

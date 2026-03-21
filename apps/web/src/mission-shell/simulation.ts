@@ -60,12 +60,7 @@ type WorldAction =
   | { type: "step" }
   | { type: "reset" };
 
-const TIMELINE_LABELS = [
-  "clock pulse",
-  "world snapshot",
-  "map redraw",
-  "idle hold",
-] as const;
+const TIMELINE_LABELS = ["clock pulse", "world snapshot", "map redraw", "idle hold"] as const;
 
 const CONSOLE_LABELS = [
   "sim :: deterministic step committed",

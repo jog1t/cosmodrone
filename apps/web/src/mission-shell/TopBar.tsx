@@ -41,7 +41,8 @@ export function TopBar({
             {world.levelTitle} command deck
           </h1>
           <p className="mission-mono mt-2 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-            uplink {getUplinkState(world.tick)} :: routes {getRouteState(world.tick, world.runState)}
+            uplink {getUplinkState(world.tick)} :: routes{" "}
+            {getRouteState(world.tick, world.runState)}
           </p>
         </div>
 
