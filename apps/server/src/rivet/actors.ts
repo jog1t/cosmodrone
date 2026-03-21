@@ -145,4 +145,7 @@ export const registry = setup({
     roomIndex,
     droneRoom,
   },
+  // Serverless mode: publicEndpoint and publicToken are read from
+  // RIVET_PUBLIC_ENDPOINT and RIVET_PUBLIC_TOKEN env vars automatically.
+  serverless: {},
 });
