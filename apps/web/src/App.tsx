@@ -3,7 +3,7 @@ import { createRivetKit } from "@rivetkit/react";
 
 const playerId = `pilot-${crypto.randomUUID().slice(0, 8)}`;
 const displayName = `Pilot ${playerId.slice(-4).toUpperCase()}`;
-const endpoint = import.meta.env.RIVET_PUBLIC_ENDPOINT?.trim() || "/api/rivet";
+const endpoint = import.meta.env.RIVET_PUBLIC_ENDPOINT?.trim() || "";
 
 const { useActor } = createRivetKit({ endpoint });
 
