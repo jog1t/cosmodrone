@@ -4,7 +4,7 @@ Multiplayer game scaffold with a Vite + React + Tailwind frontend and a RivetKit
 
 ## Workspace
 
-- `apps/web` - React client connected to a sample `droneRoom` actor
+- `apps/web` - React client for the Cosmodrone mission shell
 - `apps/server` - Hono + RivetKit backend exposing `/api/rivet/*`
 
 ## Commands
