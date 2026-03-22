@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useActor } from "../rivet";
-import type { MissionWorldSnapshot } from "@cosmodrone/server/src/rivet/mission/types";
+import type { MissionWorldSnapshot } from "@cosmodrone/server";
 
 const SESSION_ID = "sandbox";
 const DRONE_IDS = ["miner-alpha"];
