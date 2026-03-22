@@ -37,7 +37,7 @@ export function useWorldSimulation(): SimulationState {
     if (world.connStatus !== "connected" || !world.connection) return;
 
     void (async () => {
-      const initial = (await world.connection!.getSnapshot()) as MissionWorldSnapshot;
+      const initial = await world.connection!.getSnapshot();
       setSnapshot(initial);
     })();
   }, [world.connStatus, world.connection]);
@@ -54,7 +54,10 @@ export function useWorldSimulation(): SimulationState {
 
     tickIntervalRef.current = setInterval(() => {
       if (!world.connection) return;
-      void (world.connection.runTick() as Promise<MissionWorldSnapshot>).then(setSnapshot);
+      void (async () => {
+        const snap = await world.connection!.runTick();
+        setSnapshot(snap);
+      })();
     }, TICK_INTERVAL_MS);
 
     return () => {
@@ -70,7 +73,7 @@ export function useWorldSimulation(): SimulationState {
   const reset = () => {
     setIsRunning(false);
     if (!world.connection) return;
-    void (world.connection.resetWorld() as Promise<MissionWorldSnapshot>).then(setSnapshot);
+    void world.connection.resetWorld().then((snap) => setSnapshot(snap));
   };
 
   const status: SimulationStatus = (() => {

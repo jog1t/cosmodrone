@@ -1,6 +1,4 @@
 import { createRivetKit } from "@rivetkit/react";
+import type { registry } from "server/src/rivet/actors";
 
-// createRivetKit without the registry generic — actions are untyped at call
-// sites but the runtime connection works correctly. Type-safe action calls are
-// handled via explicit cast in useWorldSimulation.
-export const { useActor } = createRivetKit();
+export const { useActor } = createRivetKit<typeof registry>();
