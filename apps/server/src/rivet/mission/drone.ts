@@ -1,7 +1,7 @@
 import { actor } from "rivetkit";
 import { sleep } from "./helpers";
 import { getMissionDroneSnapshot } from "./snapshots";
-import type { DroneTickResponse, MissionDroneBehavior, MissionDroneConfig } from "./types";
+import type { DroneTickResponse } from "./types";
 
 export const drone = actor({
   options: {
@@ -18,14 +18,12 @@ export const drone = actor({
     lastCompletedTick: 0,
     lastResponseStatus: "idle" as DroneTickResponse["status"],
   },
+  onCreate(c, input: { droneId: string; playerId: string }) {
+    c.state.droneId = input.droneId;
+    c.state.playerId = input.playerId;
+  },
   actions: {
-    configureDrone: (c, input: MissionDroneConfig) => {
-      c.state.droneId = input.droneId;
-      c.state.playerId = input.playerId;
-      c.state.script = input.script ?? c.state.script;
-      return getMissionDroneSnapshot(c.state);
-    },
-    configureBehavior: (c, next: MissionDroneBehavior) => {
+    configureBehavior: (c, next: { responseDelayMs?: number; failOnTick?: number | null }) => {
       if (next.responseDelayMs !== undefined) {
         c.state.responseDelayMs = Math.max(0, next.responseDelayMs);
       }

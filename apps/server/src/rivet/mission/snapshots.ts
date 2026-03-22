@@ -14,7 +14,6 @@ export function getMissionPlayerSnapshot(state: MissionPlayerState): MissionPlay
     playerId: state.playerId,
     displayName: state.displayName,
     droneIds: [...state.droneIds],
-    scripts: { ...state.scripts },
   };
 }
 

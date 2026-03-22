@@ -17,10 +17,6 @@ describe("cross-actor flow", () => {
       playerId: "player-seed",
       displayName: "Player SEED",
       droneIds: ["drone-a", "drone-b"],
-      scripts: {
-        "drone-a": "",
-        "drone-b": "",
-      },
     });
 
     expect(await client.world.getOrCreate([sessionId]).getSnapshot()).toEqual({

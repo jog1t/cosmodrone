@@ -20,9 +20,6 @@ describe("player actor", () => {
       playerId: "player-author",
       displayName: "Player AUTHOR",
       droneIds: ["drone-main"],
-      scripts: {
-        "drone-main": "export function tick() { return idle; }",
-      },
     });
 
     expect(await client.drone.getOrCreate([sessionId, "drone-main"]).getSnapshot()).toMatchObject({

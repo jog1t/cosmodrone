@@ -3,7 +3,7 @@ import type { DroneTickResponse } from "./types";
 type MissionDroneClient = {
   drone: {
     getOrCreate: (key: string[]) => {
-      runTick: (input: { tick: number }) => Promise<DroneTickResponse | Promise<DroneTickResponse>>;
+      runTick: (input: { tick: number }) => Promise<DroneTickResponse>;
     };
   };
 };
@@ -39,46 +39,22 @@ export async function collectDroneResponse(
   tick: number,
   timeoutMs: number,
 ): Promise<DroneTickResponse> {
-  const timeoutResponse = createTimeoutResponse(droneId, tick, timeoutMs);
+  const timeout = new Promise<DroneTickResponse>((resolve) => {
+    setTimeout(() => resolve(createTimeoutResponse(droneId, tick, timeoutMs)), timeoutMs);
+  });
 
   try {
-    const response = client.drone
-      .getOrCreate([sessionId, droneId])
-      .runTick({ tick })
-      .then((value) => value);
-
-    return await new Promise<DroneTickResponse>((resolve) => {
-      const timeoutId = setTimeout(() => {
-        resolve(timeoutResponse);
-      }, timeoutMs);
-
-      response
-        .then((value) => {
-          clearTimeout(timeoutId);
-          resolve(value);
-        })
-        .catch((error: unknown) => {
-          clearTimeout(timeoutId);
-          resolve({
-            tick,
-            droneId,
-            status: "error",
-            intent: null,
-            logs: [`[${tick}] ${droneId} :: runtime error`],
-            error: error instanceof Error ? error.message : String(error),
-            memory: {
-              lastCompletedTick: Math.max(0, tick - 1),
-            },
-          });
-        });
-    });
+    return await Promise.race([
+      client.drone.getOrCreate([sessionId, droneId]).runTick({ tick }),
+      timeout,
+    ]);
   } catch (error) {
     return {
       tick,
       droneId,
       status: "error",
       intent: null,
-      logs: [`[${tick}] ${droneId} :: world request failed`],
+      logs: [`[${tick}] ${droneId} :: runtime error`],
       error: error instanceof Error ? error.message : String(error),
       memory: {
         lastCompletedTick: Math.max(0, tick - 1),

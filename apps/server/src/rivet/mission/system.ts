@@ -38,10 +38,11 @@ export const system = actor({
 
       await Promise.all(
         input.droneIds.map((droneId) =>
-          client.drone.getOrCreate([sessionId, droneId]).configureDrone({
-            droneId,
-            playerId: input.playerId,
-          }),
+          client.drone
+            .getOrCreate([sessionId, droneId], {
+              createWithInput: { droneId, playerId: input.playerId },
+            })
+            .getSnapshot(),
         ),
       );
 

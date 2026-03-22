@@ -1,9 +1,5 @@
 export type MissionWorldPhase = "idle" | "awaiting_drones" | "resolved";
 
-export type DroneIntent = {
-  type: "idle";
-};
-
 export type DroneTickResponse = {
   tick: number;
   droneId: string;
@@ -16,11 +12,14 @@ export type DroneTickResponse = {
   };
 };
 
+export type DroneIntent = {
+  type: "idle";
+};
+
 export type MissionPlayerState = {
   playerId: string;
   displayName: string;
   droneIds: string[];
-  scripts: Record<string, string>;
 };
 
 export type MissionDroneState = {
@@ -81,27 +80,5 @@ export type MissionWorldSnapshot = {
 };
 
 export type MissionSystemSnapshot = MissionSystemState;
-
-export type MissionPlayerConfig = {
-  playerId: string;
-  displayName: string;
-  droneIds: string[];
-};
-
-export type MissionDroneConfig = {
-  droneId: string;
-  playerId: string;
-  script?: string;
-};
-
-export type MissionDroneBehavior = {
-  responseDelayMs?: number;
-  failOnTick?: number | null;
-};
-
-export type MissionWorldConfig = {
-  droneIds: string[];
-  tickTimeoutMs?: number;
-};
 
 export const DEFAULT_TICK_TIMEOUT_MS = 50;

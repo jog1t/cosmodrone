@@ -5,7 +5,6 @@ import { getMissionWorldSnapshot } from "./snapshots";
 import {
   DEFAULT_TICK_TIMEOUT_MS,
   type DroneTickResponse,
-  type MissionWorldConfig,
   type MissionWorldPhase,
   type MissionWorldSnapshot,
 } from "./types";
@@ -27,7 +26,10 @@ export const world = actor({
     responses: {} as Record<string, DroneTickResponse>,
   },
   actions: {
-    configureWorld: (c, input: MissionWorldConfig): MissionWorldSnapshot => {
+    configureWorld: (
+      c,
+      input: { droneIds: string[]; tickTimeoutMs?: number },
+    ): MissionWorldSnapshot => {
       c.state.droneIds = [...input.droneIds];
       c.state.tickTimeoutMs = input.tickTimeoutMs ?? c.state.tickTimeoutMs;
       c.state.phase = "idle";
