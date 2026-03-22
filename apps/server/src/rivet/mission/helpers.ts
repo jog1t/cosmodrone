@@ -9,7 +9,7 @@ export function sleep(ms: number) {
 type MissionDroneClient = {
   drone: {
     getOrCreate: (key: string[]) => {
-      runTick: (input: { tick: number }) => Promise<DroneTickResponse>;
+      runTick: (input: { tick: number }) => Promise<DroneTickResponse | Promise<DroneTickResponse>>;
     };
   };
 };
