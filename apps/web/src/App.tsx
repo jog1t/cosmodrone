@@ -4,10 +4,15 @@ import { AssemblerSidebar } from "./mission-shell/AssemblerSidebar";
 import { InspectorSidebar } from "./mission-shell/InspectorSidebar";
 import { MapPanel } from "./mission-shell/MapPanel";
 import { TopBar } from "./mission-shell/TopBar";
+import { useWorldSimulation } from "./mission-shell/useWorldSimulation";
+import { mapSnapshotToUi } from "./mission-shell/actorWorld";
 
 function App() {
   const [showInspector, setShowInspector] = useState(true);
   const [showAssembler, setShowAssembler] = useState(true);
+
+  const sim = useWorldSimulation();
+  const world = mapSnapshotToUi(sim.snapshot, sim.status);
 
   const mapColumns = `${showInspector ? "320px " : ""}minmax(0,1fr)${showAssembler ? " 420px" : ""}`;
 
@@ -19,6 +24,12 @@ function App() {
           showInspector={showInspector}
           toggleAssembler={() => setShowAssembler((value) => !value)}
           toggleInspector={() => setShowInspector((value) => !value)}
+          tick={world.tick}
+          status={world.status}
+          isRunning={sim.isRunning}
+          onRun={sim.start}
+          onPause={sim.pause}
+          onReset={sim.reset}
         />
 
         <div

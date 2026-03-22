@@ -1,4 +1,5 @@
-import { commandShortcuts, objectiveStats } from "./data";
+import { commandShortcuts } from "./data";
+import type { SimulationStatus } from "./useWorldSimulation";
 import { ToggleButton } from "./ToggleButton";
 
 type TopBarProps = {
@@ -6,6 +7,18 @@ type TopBarProps = {
   showInspector: boolean;
   toggleAssembler: () => void;
   toggleInspector: () => void;
+  tick: string;
+  status: SimulationStatus;
+  isRunning: boolean;
+  onRun: () => void;
+  onPause: () => void;
+  onReset: () => void;
+};
+
+const STATUS_LABEL: Record<SimulationStatus, string> = {
+  idle: "Idle",
+  running: "Running",
+  failed: "Failed",
 };
 
 export function TopBar({
@@ -13,7 +26,20 @@ export function TopBar({
   showInspector,
   toggleAssembler,
   toggleInspector,
+  tick,
+  status,
+  isRunning,
+  onRun,
+  onPause,
+  onReset,
 }: TopBarProps) {
+  const objectiveStats = [
+    { label: "Objective", value: "Deliver 15 ore" },
+    { label: "Tick", value: tick },
+    { label: "Status", value: STATUS_LABEL[status] },
+    { label: "Failure", value: status === "failed" ? "Yes" : "None" },
+  ];
+
   return (
     <header className="grid min-h-0 grid-cols-[minmax(0,1fr)_minmax(520px,630px)] gap-[1px] bg-[#061019]">
       <div className="grid min-w-0 grid-cols-[minmax(300px,1fr)_minmax(420px,630px)] items-center gap-6 bg-[linear-gradient(180deg,#07131d_0%,#041019_100%)] px-5">
@@ -51,19 +77,41 @@ export function TopBar({
           label="assembler"
           onClick={toggleAssembler}
         />
-        {commandShortcuts.map((item) => (
-          <div
-            key={item.command}
-            className="flex min-w-0 items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
-          >
-            <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-              {item.command}
-            </span>
-            <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">
-              {item.label}
-            </span>
-          </div>
-        ))}
+        <button
+          className="flex min-w-0 cursor-pointer items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
+          onClick={isRunning ? onPause : onRun}
+        >
+          <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
+            space
+          </span>
+          <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">
+            {isRunning ? "pause" : "run"}
+          </span>
+        </button>
+        <button
+          className="flex min-w-0 cursor-pointer items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
+          onClick={onReset}
+        >
+          <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
+            ctrl+r
+          </span>
+          <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">reset</span>
+        </button>
+        {commandShortcuts
+          .filter((item) => item.command !== "ctrl+r" && item.command !== "space")
+          .map((item) => (
+            <div
+              key={item.command}
+              className="flex min-w-0 items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
+            >
+              <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
+                {item.command}
+              </span>
+              <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">
+                {item.label}
+              </span>
+            </div>
+          ))}
       </div>
     </header>
   );
