@@ -35,35 +35,4 @@ describe("world actor", () => {
       status: "ok",
     });
   });
-
-  it("propagates drone execution errors back into world responses", async (c) => {
-    const sessionId = "world-error";
-
-    const { client } = await bootstrapSoloSession(c, {
-      sessionId,
-      playerId: "player-error",
-      displayName: "Player ERROR",
-      droneIds: ["drone-ok", "drone-bad"],
-      tickTimeoutMs: 50,
-    });
-
-    await seedDroneScripts(client, sessionId, {
-      "drone-ok": "return idle",
-      "drone-bad": "return idle",
-    });
-
-    await client.drone.getOrCreate([sessionId, "drone-bad"]).configureBehavior({ failOnTick: 1 });
-
-    const snapshot = await client.world.getOrCreate([sessionId]).runTick();
-
-    expect(snapshot.tick).toBe(1);
-    expect(snapshot.phase).toBe("resolved");
-    expect(snapshot.responses["drone-ok"]).toMatchObject({ status: "ok" });
-    expect(snapshot.responses["drone-bad"]).toMatchObject({
-      tick: 1,
-      droneId: "drone-bad",
-      status: "error",
-      error: "failOnTick",
-    });
-  });
 });

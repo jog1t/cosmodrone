@@ -25,7 +25,6 @@ export type MissionDroneState = {
   droneId: string;
   playerId: string;
   script: string;
-  failOnTick: number | null;
   lastRequestedTick: number;
   lastCompletedTick: number;
   lastResponseStatus: DroneTickResponse["status"];
@@ -59,7 +58,6 @@ export type MissionDroneSnapshot = {
   droneId: string;
   playerId: string;
   script: string;
-  failOnTick: number | null;
   lastRequestedTick: number;
   lastCompletedTick: number;
   lastResponseStatus: DroneTickResponse["status"];

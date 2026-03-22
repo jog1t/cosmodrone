@@ -11,7 +11,6 @@ export const drone = actor({
     droneId: "",
     playerId: "",
     script: "",
-    failOnTick: null as number | null,
     lastRequestedTick: 0,
     lastCompletedTick: 0,
     lastResponseStatus: "idle" as DroneTickResponse["status"],
@@ -21,12 +20,6 @@ export const drone = actor({
     c.state.playerId = input.playerId;
   },
   actions: {
-    configureBehavior: (c, next: { failOnTick?: number | null }) => {
-      if (next.failOnTick !== undefined) {
-        c.state.failOnTick = next.failOnTick;
-      }
-      return getMissionDroneSnapshot(c.state);
-    },
     updateScript: (c, script: string) => {
       c.state.script = script;
       return getMissionDroneSnapshot(c.state);
@@ -34,21 +27,6 @@ export const drone = actor({
     runTick: (c, input: { tick: number }): DroneTickResponse => {
       c.state.lastRequestedTick = input.tick;
       c.state.lastCompletedTick = input.tick;
-
-      if (c.state.failOnTick === input.tick) {
-        c.state.lastResponseStatus = "error";
-
-        return {
-          tick: input.tick,
-          droneId: c.state.droneId,
-          status: "error",
-          intent: null,
-          error: "failOnTick",
-          memory: {
-            lastCompletedTick: input.tick,
-          },
-        };
-      }
 
       const isConfigured = c.state.script.trim().length > 0;
       c.state.lastResponseStatus = isConfigured ? "ok" : "idle";
