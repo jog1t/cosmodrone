@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useActor } from "../rivet";
 import type { MissionWorldSnapshot } from "./types";
 
@@ -20,7 +20,6 @@ export type SimulationState = {
 export function useWorldSimulation(): SimulationState {
   const [snapshot, setSnapshot] = useState<MissionWorldSnapshot | null>(null);
   const [isRunning, setIsRunning] = useState(false);
-  const tickIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Connect to the world actor for the sandbox session.
   // useActor manages the connection lifecycle — it reconnects automatically.
@@ -42,29 +41,25 @@ export function useWorldSimulation(): SimulationState {
     })();
   }, [world.connStatus, world.connection]);
 
-  // Drive ticks via setInterval while isRunning is true.
+  // Drive ticks while isRunning is true. Uses a cancellable async loop
+  // so ticks never overlap — each tick waits for the previous to complete.
   useEffect(() => {
-    if (!isRunning) {
-      if (tickIntervalRef.current !== null) {
-        clearInterval(tickIntervalRef.current);
-        tickIntervalRef.current = null;
-      }
-      return;
-    }
+    if (!isRunning) return;
 
-    tickIntervalRef.current = setInterval(() => {
-      if (!world.connection) return;
-      void (async () => {
-        const snap = await world.connection!.runTick();
-        setSnapshot(snap);
-      })();
-    }, TICK_INTERVAL_MS);
+    let cancelled = false;
+
+    const loop = async () => {
+      while (!cancelled && world.connection) {
+        const snap = await world.connection.runTick();
+        if (!cancelled) setSnapshot(snap);
+        await new Promise((resolve) => setTimeout(resolve, TICK_INTERVAL_MS));
+      }
+    };
+
+    void loop();
 
     return () => {
-      if (tickIntervalRef.current !== null) {
-        clearInterval(tickIntervalRef.current);
-        tickIntervalRef.current = null;
-      }
+      cancelled = true;
     };
   }, [isRunning, world.connection]);
 
