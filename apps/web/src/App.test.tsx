@@ -94,7 +94,9 @@ describe("App", () => {
     render(<App />);
 
     await vi.waitFor(() => {
-      expect(screen.getByRole("heading", { name: /First loop.*command deck/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /First loop.*command deck/i }),
+      ).toBeInTheDocument();
     });
 
     expect(screen.getByText(/map renderer/i)).toBeInTheDocument();

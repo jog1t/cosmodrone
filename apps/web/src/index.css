@@ -155,7 +155,9 @@ canvas {
 }
 
 .editor-shell .monaco-editor .cursor {
-  box-shadow: 0 0 10px rgba(100, 200, 240, 0.55), 0 0 20px rgba(100, 200, 240, 0.18);
+  box-shadow:
+    0 0 10px rgba(100, 200, 240, 0.55),
+    0 0 20px rgba(100, 200, 240, 0.18);
 }
 
 .editor-shell .monaco-scrollable-element > .scrollbar > .slider {

@@ -49,7 +49,9 @@ export function ActionButton({
       {active && (
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-          style={{ background: "linear-gradient(90deg,transparent,rgba(220,150,60,0.5),transparent)" }}
+          style={{
+            background: "linear-gradient(90deg,transparent,rgba(220,150,60,0.5),transparent)",
+          }}
         />
       )}
       <span className="mission-mono text-[8px] uppercase tracking-[0.2em] text-slate-700">

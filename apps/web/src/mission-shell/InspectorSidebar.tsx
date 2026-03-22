@@ -34,7 +34,9 @@ export function InspectorSidebar({ world }: InspectorSidebarProps) {
         >
           <div
             className="pointer-events-none absolute inset-x-0 top-0 h-px"
-            style={{ background: "linear-gradient(90deg,transparent,rgba(52,180,120,0.3),transparent)" }}
+            style={{
+              background: "linear-gradient(90deg,transparent,rgba(52,180,120,0.3),transparent)",
+            }}
           />
           <p className="mission-mono text-[9px] uppercase tracking-[0.36em] text-emerald-600/80">
             selected drone
@@ -49,10 +51,7 @@ export function InspectorSidebar({ world }: InspectorSidebarProps) {
         </div>
 
         {/* Stats table */}
-        <div
-          className="gap-px grid"
-          style={{ background: "var(--cold-border)" }}
-        >
+        <div className="gap-px grid" style={{ background: "var(--cold-border)" }}>
           {inspectorStats.map(([label, value]) => (
             <div
               key={label}
@@ -86,9 +85,14 @@ export function InspectorSidebar({ world }: InspectorSidebarProps) {
         >
           <div
             className="pointer-events-none absolute inset-x-0 top-0 h-px"
-            style={{ background: "linear-gradient(90deg,transparent,rgba(200,130,50,0.28),transparent)" }}
+            style={{
+              background: "linear-gradient(90deg,transparent,rgba(200,130,50,0.28),transparent)",
+            }}
           />
-          <p className="mission-mono text-[9px] uppercase tracking-[0.34em]" style={{ color: "var(--warm-accent-dim)" }}>
+          <p
+            className="mission-mono text-[9px] uppercase tracking-[0.34em]"
+            style={{ color: "var(--warm-accent-dim)" }}
+          >
             warning channel
           </p>
           <p className="mt-2 text-[13px] uppercase tracking-widest text-amber-200/65">

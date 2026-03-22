@@ -39,7 +39,10 @@ export function TopBar({
   ];
 
   return (
-    <header className="grid min-h-0 grid-cols-[minmax(0,1fr)_360px] gap-px" style={{ background: "var(--panel-separator)" }}>
+    <header
+      className="grid min-h-0 grid-cols-[minmax(0,1fr)_360px] gap-px"
+      style={{ background: "var(--panel-separator)" }}
+    >
       {/* ── Left: identity + stats ── */}
       <div
         className="relative grid min-w-0 grid-cols-[minmax(260px,1fr)_minmax(380px,540px)] items-center gap-8 overflow-hidden px-6"
@@ -48,12 +51,18 @@ export function TopBar({
         {/* Top accent line */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-px"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(80,180,230,0.35) 40%, rgba(200,130,50,0.2) 70%, transparent)" }}
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgba(80,180,230,0.35) 40%, rgba(200,130,50,0.2) 70%, transparent)",
+          }}
         />
 
         {/* Identity block */}
         <div className="min-w-0">
-          <p className="mission-mono text-[9px] uppercase tracking-[0.5em]" style={{ color: "var(--cold-accent-dim)" }}>
+          <p
+            className="mission-mono text-[9px] uppercase tracking-[0.5em]"
+            style={{ color: "var(--cold-accent-dim)" }}
+          >
             cosmodrone :: level-01 :: terminal shell
           </p>
           <h1 className="mt-1 truncate text-[26px] font-semibold uppercase leading-tight tracking-[0.12em] text-slate-50">
@@ -79,11 +88,17 @@ export function TopBar({
               style={{ background: "var(--panel-bg-alt)" }}
             >
               {/* Top highlight */}
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "rgba(80,180,230,0.1)" }} />
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{ background: "rgba(80,180,230,0.1)" }}
+              />
               <p className="mission-mono text-[9px] uppercase tracking-[0.35em] text-slate-600">
                 {item.label}
               </p>
-              <hr className="mt-1.5 border-0 border-t" style={{ borderColor: "var(--cold-border)" }} />
+              <hr
+                className="mt-1.5 border-0 border-t"
+                style={{ borderColor: "var(--cold-border)" }}
+              />
               <p
                 className="mt-1.5 text-[15px] font-medium uppercase tracking-[0.1em]"
                 style={{ color: item.warm ? "var(--warm-accent)" : "var(--cold-accent)" }}
@@ -100,9 +115,24 @@ export function TopBar({
         className="grid min-w-0 grid-cols-5 gap-px"
         style={{ background: "var(--panel-separator)" }}
       >
-        <ToggleButton active={showInspector} command="tab" label="Inspector" onClick={toggleInspector} />
-        <ToggleButton active={showAssembler} command="shift+a" label="Assembler" onClick={toggleAssembler} />
-        <ActionButton command="ctrl+r" disabled={controlsDisabled} label="Reset" onClick={onReset} />
+        <ToggleButton
+          active={showInspector}
+          command="tab"
+          label="Inspector"
+          onClick={toggleInspector}
+        />
+        <ToggleButton
+          active={showAssembler}
+          command="shift+a"
+          label="Assembler"
+          onClick={toggleAssembler}
+        />
+        <ActionButton
+          command="ctrl+r"
+          disabled={controlsDisabled}
+          label="Reset"
+          onClick={onReset}
+        />
         <ActionButton
           active={isRunning}
           command="space"

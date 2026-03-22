@@ -18,10 +18,15 @@ export function BottomPanels({ world }: BottomPanelsProps) {
       >
         <PanelHeader title="Console" subtitle="runtime feedback" />
 
-        <div className="mission-mono min-h-0 overflow-auto px-4 py-3 text-[11px] leading-[1.9]" style={{ color: "rgba(100,200,140,0.75)" }}>
+        <div
+          className="mission-mono min-h-0 overflow-auto px-4 py-3 text-[11px] leading-[1.9]"
+          style={{ color: "rgba(100,200,140,0.75)" }}
+        >
           {world.consoleLines.map((line) => (
             <p key={line}>
-              <span style={{ color: "rgba(52,160,100,0.5)" }} aria-hidden>{">"}&nbsp;</span>
+              <span style={{ color: "rgba(52,160,100,0.5)" }} aria-hidden>
+                {">"}&nbsp;
+              </span>
               {line}
             </p>
           ))}
