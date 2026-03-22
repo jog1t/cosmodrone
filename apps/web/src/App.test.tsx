@@ -25,13 +25,8 @@ const actorMocks = vi.hoisted(() => {
   });
 
   return {
-    playerConnection: {
-      updateDroneScript: vi.fn(async () => ({
-        playerId: "player-alpha",
-        displayName: "Player ALPHA",
-        droneIds: ["drone_01"],
-        scripts: { drone_01: "code" },
-      })),
+    droneConnection: {
+      updateScript: vi.fn(async () => ({})),
     },
     systemConnection: {
       bootstrapSoloSession: vi.fn(async () => ({
@@ -53,7 +48,7 @@ const actorMocks = vi.hoisted(() => {
     },
     reset() {
       tick = 0;
-      this.playerConnection.updateDroneScript.mockClear();
+      this.droneConnection.updateScript.mockClear();
       this.systemConnection.bootstrapSoloSession.mockClear();
       this.worldConnection.getSnapshot.mockClear();
       this.worldConnection.resetWorld.mockClear();
@@ -73,8 +68,8 @@ vi.mock("./rivet", () => ({
     system: {
       getOrCreate: () => actorMocks.systemConnection,
     },
-    player: {
-      getOrCreate: () => actorMocks.playerConnection,
+    drone: {
+      getOrCreate: () => actorMocks.droneConnection,
     },
     world: {
       getOrCreate: () => actorMocks.worldConnection,
@@ -136,7 +131,12 @@ describe("App", () => {
     fireEvent.click(screen.getAllByRole("button", { name: /space play/i })[0]!);
 
     await act(async () => {
-      vi.advanceTimersByTime(900);
+      vi.advanceTimersByTime(450);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      vi.advanceTimersByTime(450);
       await Promise.resolve();
     });
 
@@ -149,7 +149,7 @@ describe("App", () => {
 
     expect(within(tickPanel).getByText(/^0000$/)).toBeInTheDocument();
     expect(actorMocks.systemConnection.bootstrapSoloSession).toHaveBeenCalledTimes(1);
-    expect(actorMocks.playerConnection.updateDroneScript).toHaveBeenCalledTimes(1);
+    expect(actorMocks.droneConnection.updateScript).toHaveBeenCalledTimes(1);
     expect(actorMocks.worldConnection.runTick).toHaveBeenCalledTimes(3);
     expect(actorMocks.worldConnection.resetWorld).toHaveBeenCalledTimes(1);
   });

@@ -14,7 +14,6 @@ export function useWorldSimulation() {
   const bootstrappedRef = useRef(false);
 
   const systemActor = useMemo(() => client.system.getOrCreate([SESSION_ID]), []);
-  const playerActor = useMemo(() => client.player.getOrCreate([SESSION_ID, PLAYER_ID]), []);
   const worldActor = useMemo(() => client.world.getOrCreate([SESSION_ID]), []);
 
   const applySnapshot = useCallback((snapshot: MissionWorldSnapshot) => {
@@ -39,7 +38,8 @@ export function useWorldSimulation() {
         tickTimeoutMs: STEP_INTERVAL_MS,
       });
 
-      await playerActor.updateDroneScript("drone_01", missionCode);
+      const droneActor = client.drone.getOrCreate([SESSION_ID, "drone_01"]);
+      await droneActor.updateScript(missionCode);
       const snapshot = (await worldActor.getSnapshot()) as MissionWorldSnapshot;
 
       if (!cancelled) {
@@ -52,7 +52,7 @@ export function useWorldSimulation() {
     return () => {
       cancelled = true;
     };
-  }, [applySnapshot, playerActor, systemActor, worldActor]);
+  }, [applySnapshot, systemActor, worldActor]);
 
   useEffect(() => {
     if (!isReady || !isRunning) {
@@ -61,17 +61,19 @@ export function useWorldSimulation() {
 
     let cancelled = false;
 
-    const intervalId = window.setInterval(() => {
-      void worldActor.runTick().then((snapshot) => {
-        if (!cancelled) {
-          applySnapshot(snapshot as MissionWorldSnapshot);
-        }
-      });
-    }, STEP_INTERVAL_MS);
+    async function runNextTick() {
+      if (cancelled) return;
+      const snapshot = await worldActor.runTick();
+      if (!cancelled) {
+        applySnapshot(snapshot as MissionWorldSnapshot);
+        setTimeout(runNextTick, STEP_INTERVAL_MS);
+      }
+    }
+
+    setTimeout(runNextTick, STEP_INTERVAL_MS);
 
     return () => {
       cancelled = true;
-      window.clearInterval(intervalId);
     };
   }, [applySnapshot, isReady, isRunning, worldActor]);
 

@@ -11,12 +11,14 @@ function createConsoleLines(snapshot: MissionWorldSnapshot) {
   const responseEntries = Object.values(snapshot.responses);
   const responseLines = responseEntries.flatMap((response) => response.logs);
 
+  if (snapshot.tick === 0 && responseLines.length === 0) {
+    return ["[000] sim :: world actor connected", "[000] drone_01 :: awaiting first tick"];
+  }
+
   return [
     ...responseLines,
     `[${formatTick(snapshot.tick)}] world :: phase=${snapshot.phase}`,
     `[${formatTick(snapshot.tick)}] world :: ready=${snapshot.readyForNextTick ? "yes" : "no"}`,
-    "[000] sim :: world actor connected",
-    "[000] drone_01 :: awaiting first tick",
   ].slice(0, 6);
 }
 
@@ -51,10 +53,6 @@ function deriveFailure(snapshot: MissionWorldSnapshot) {
   return (
     Object.values(snapshot.responses).find((response) => response.status === "error")?.error ?? null
   );
-}
-
-function deriveRunState(snapshot: MissionWorldSnapshot): WorldState["runState"] {
-  return snapshot.phase === "awaiting_drones" ? "running" : "paused";
 }
 
 export function createInitialActorWorldState(): WorldState {
@@ -109,7 +107,7 @@ export function mapActorSnapshotToWorld(snapshot: MissionWorldSnapshot): WorldSt
 
   return {
     tick,
-    runState: deriveRunState(snapshot),
+    runState: "paused",
     failure: deriveFailure(snapshot),
     levelTitle: "First Loop",
     objectiveOre: 10,

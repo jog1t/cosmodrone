@@ -37,10 +37,9 @@ export async function bootstrapSoloSession(c: TestContextLike, options: Bootstra
 export async function seedDroneScripts(
   client: Awaited<ReturnType<typeof createMissionTestClient>>,
   sessionId: string,
-  playerId: string,
   scripts: ScriptMap,
 ) {
   for (const [droneId, script] of Object.entries(scripts)) {
-    await client.player.getOrCreate([sessionId, playerId]).updateDroneScript(droneId, script);
+    await client.drone.getOrCreate([sessionId, droneId]).updateScript(script);
   }
 }

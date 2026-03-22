@@ -13,7 +13,7 @@ describe("world actor", () => {
       tickTimeoutMs: 80,
     });
 
-    await seedDroneScripts(client, sessionId, "player-alpha", {
+    await seedDroneScripts(client, sessionId, {
       "drone-1": "return idle",
       "drone-2": "return idle",
     });
@@ -54,7 +54,7 @@ describe("world actor", () => {
       tickTimeoutMs: 20,
     });
 
-    await seedDroneScripts(client, sessionId, "player-bravo", {
+    await seedDroneScripts(client, sessionId, {
       "drone-fast": "return idle",
       "drone-slow": "return idle",
     });
@@ -95,7 +95,7 @@ describe("world actor", () => {
       tickTimeoutMs: 50,
     });
 
-    await seedDroneScripts(client, sessionId, "player-error", {
+    await seedDroneScripts(client, sessionId, {
       "drone-ok": "return idle",
       "drone-bad": "return idle",
     });

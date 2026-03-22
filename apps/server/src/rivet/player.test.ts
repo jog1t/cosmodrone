@@ -2,29 +2,22 @@ import { describe, expect, it } from "vitest";
 import { bootstrapSoloSession } from "./test-utils";
 
 describe("player actor", () => {
-  it("propagates script updates into the target drone actor", async (c) => {
-    const sessionId = "player-script-sync";
+  it("returns a snapshot with the configured player identity and drone roster", async (c) => {
+    const sessionId = "player-config";
 
     const { client } = await bootstrapSoloSession(c, {
       sessionId,
       playerId: "player-author",
       displayName: "Player AUTHOR",
-      droneIds: ["drone-main"],
+      droneIds: ["drone-main", "drone-scout"],
     });
 
-    const playerSnapshot = await client.player
-      .getOrCreate([sessionId, "player-author"])
-      .updateDroneScript("drone-main", "export function tick() { return idle; }");
+    const snapshot = await client.player.getOrCreate([sessionId, "player-author"]).getSnapshot();
 
-    expect(playerSnapshot).toEqual({
+    expect(snapshot).toEqual({
       playerId: "player-author",
       displayName: "Player AUTHOR",
-      droneIds: ["drone-main"],
-    });
-
-    expect(await client.drone.getOrCreate([sessionId, "drone-main"]).getSnapshot()).toMatchObject({
-      droneId: "drone-main",
-      script: "export function tick() { return idle; }",
+      droneIds: ["drone-main", "drone-scout"],
     });
   });
 });
