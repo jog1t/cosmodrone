@@ -1,24 +1,25 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-
-vi.mock("@monaco-editor/react", () => ({
-  default: ({ defaultValue }: { defaultValue?: string }) => (
-    <div data-testid="monaco-editor">{defaultValue}</div>
-  ),
-}));
+import { describe, expect, it } from "vitest";
 
 import App from "./App";
 
 describe("App", () => {
-  it("renders the puzzle mode shell", () => {
+  it("renders the mission shell", () => {
     render(<App />);
 
-    expect(screen.getByText(/First loop command deck/i)).toBeInTheDocument();
-    expect(screen.getByText(/map renderer/i)).toBeInTheDocument();
-    expect(screen.getByTestId("monaco-editor")).toBeInTheDocument();
-    expect(screen.getByText(/miner-alpha.ts/i)).toBeInTheDocument();
-    expect(screen.getByText(/runtime feedback/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /tab inspector/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /shift\+a assembler/i })).toBeInTheDocument();
+    // Top bar
+    expect(screen.getByText(/First Loop/i)).toBeInTheDocument();
+    expect(screen.getByText(/Deliver 15 ore/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /RUN/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Reset/i })).toBeInTheDocument();
+
+    // Map panel
+    expect(screen.getByText(/^map$/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /sense/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /trail/i })).toBeInTheDocument();
+
+    // Right panel
+    expect(screen.getByRole("button", { name: /MINER/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Code/i })).toBeInTheDocument();
   });
 });
