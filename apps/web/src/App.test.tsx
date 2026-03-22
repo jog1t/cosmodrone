@@ -94,7 +94,7 @@ describe("App", () => {
     render(<App />);
 
     await vi.waitFor(() => {
-      expect(screen.getByText(/First loop command deck/i)).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /First loop.*command deck/i })).toBeInTheDocument();
     });
 
     expect(screen.getByText(/map renderer/i)).toBeInTheDocument();
@@ -123,13 +123,13 @@ describe("App", () => {
       throw new Error("Tick card not found");
     }
 
-    expect(within(tickPanel).getByText(/^000$/)).toBeInTheDocument();
+    expect(within(tickPanel).getByText(/^0000$/)).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.click(screen.getAllByRole("button", { name: /\. step/i })[0]!);
     });
 
-    expect(within(tickPanel).getByText(/^001$/)).toBeInTheDocument();
+    expect(within(tickPanel).getByText(/^0001$/)).toBeInTheDocument();
 
     fireEvent.click(screen.getAllByRole("button", { name: /space play/i })[0]!);
 
@@ -138,14 +138,14 @@ describe("App", () => {
       await Promise.resolve();
     });
 
-    expect(within(tickPanel).getByText(/^003$/)).toBeInTheDocument();
+    expect(within(tickPanel).getByText(/^0003$/)).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /space pause/i })[0]).toBeInTheDocument();
 
     await act(async () => {
       fireEvent.click(screen.getAllByRole("button", { name: /ctrl\+r reset/i })[0]!);
     });
 
-    expect(within(tickPanel).getByText(/^000$/)).toBeInTheDocument();
+    expect(within(tickPanel).getByText(/^0000$/)).toBeInTheDocument();
     expect(actorMocks.systemConnection.bootstrapSoloSession).toHaveBeenCalledTimes(1);
     expect(actorMocks.playerConnection.updateDroneScript).toHaveBeenCalledTimes(1);
     expect(actorMocks.worldConnection.runTick).toHaveBeenCalledTimes(3);
