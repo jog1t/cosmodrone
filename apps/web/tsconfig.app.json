@@ -24,7 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "server/*": ["../server/*"]
+      "@cosmodrone/server/*": ["../server/*"]
     }
   },
   "include": ["src", "../server/src"]

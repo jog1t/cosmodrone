@@ -1,7 +1,7 @@
 // Translation layer: maps MissionWorldSnapshot (actor data) → UI state.
 // Components consume this shape; they must not import from useWorldSimulation directly.
 
-import type { MissionWorldSnapshot } from "server/src/rivet/mission/types";
+import type { MissionWorldSnapshot } from "@cosmodrone/server/src/rivet/mission/types";
 import type { SimulationStatus } from "./useWorldSimulation";
 
 export type DroneUiState = {
