@@ -9,16 +9,20 @@ import { useWorldSimulation } from "./mission-shell/useWorldSimulation";
 function App() {
   const [showInspector, setShowInspector] = useState(true);
   const [showAssembler, setShowAssembler] = useState(true);
-  const { world, reset, step, toggleRun } = useWorldSimulation();
+  const { isReady, world, reset, step, toggleRun } = useWorldSimulation();
 
-  const mapColumns = `${showInspector ? "320px " : ""}minmax(0,1fr)${showAssembler ? " 420px" : ""}`;
+  const mapColumns = `${showInspector ? "300px " : ""}minmax(0,1fr)${showAssembler ? " 400px" : ""}`;
 
   return (
     <main className="h-screen overflow-hidden bg-transparent text-slate-100">
-      <section className="grid h-screen w-screen grid-rows-[92px_minmax(0,1fr)_172px] gap-[1px] bg-[rgba(86,156,214,0.18)] p-[1px]">
+      <section
+        className="grid h-screen w-screen grid-rows-[84px_minmax(0,1fr)_160px] gap-px"
+        style={{ background: "var(--panel-separator)" }}
+      >
         <TopBar
           showAssembler={showAssembler}
           showInspector={showInspector}
+          controlsDisabled={!isReady}
           world={world}
           onReset={reset}
           onStep={step}
@@ -28,8 +32,8 @@ function App() {
         />
 
         <div
-          className="grid min-h-0 gap-[1px] bg-[rgba(86,156,214,0.18)]"
-          style={{ gridTemplateColumns: mapColumns }}
+          className="grid min-h-0 gap-px"
+          style={{ gridTemplateColumns: mapColumns, background: "var(--panel-separator)" }}
         >
           {showInspector ? <InspectorSidebar world={world} /> : null}
           <MapPanel world={world} />

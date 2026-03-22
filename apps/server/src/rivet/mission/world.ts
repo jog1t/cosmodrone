@@ -1,4 +1,4 @@
-import { actor } from "rivetkit";
+import { actor, event } from "rivetkit";
 import type { registry } from "../actors";
 import { collectDroneResponse } from "./helpers";
 import { getMissionWorldSnapshot } from "./snapshots";
@@ -14,6 +14,9 @@ export const world = actor({
   options: {
     name: "Cosmodrone Mission World",
     icon: "globe",
+  },
+  events: {
+    snapshot: event<MissionWorldSnapshot>(),
   },
   state: {
     tick: 0,
@@ -31,7 +34,9 @@ export const world = actor({
       c.state.waitingOn = [];
       c.state.responses = {};
       c.state.tick = 0;
-      return getMissionWorldSnapshot(c.state);
+      const snapshot = getMissionWorldSnapshot(c.state);
+      c.broadcast("snapshot", snapshot);
+      return snapshot;
     },
     runTick: async (c): Promise<MissionWorldSnapshot> => {
       if (c.state.phase === "awaiting_drones") {
@@ -64,14 +69,18 @@ export const world = actor({
       c.state.tick = nextTick;
       c.state.phase = "resolved";
 
-      return getMissionWorldSnapshot(c.state);
+      const snapshot = getMissionWorldSnapshot(c.state);
+      c.broadcast("snapshot", snapshot);
+      return snapshot;
     },
     resetWorld: (c): MissionWorldSnapshot => {
       c.state.tick = 0;
       c.state.phase = "idle";
       c.state.waitingOn = [];
       c.state.responses = {};
-      return getMissionWorldSnapshot(c.state);
+      const snapshot = getMissionWorldSnapshot(c.state);
+      c.broadcast("snapshot", snapshot);
+      return snapshot;
     },
     getSnapshot: (c): MissionWorldSnapshot => getMissionWorldSnapshot(c.state),
   },

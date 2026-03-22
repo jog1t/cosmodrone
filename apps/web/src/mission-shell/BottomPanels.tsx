@@ -1,3 +1,4 @@
+import { PanelHeader } from "./PanelHeader";
 import { type WorldState } from "./simulation";
 
 type BottomPanelsProps = {
@@ -6,45 +7,50 @@ type BottomPanelsProps = {
 
 export function BottomPanels({ world }: BottomPanelsProps) {
   return (
-    <section className="grid min-h-0 grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-[1px] bg-[rgba(86,156,214,0.18)]">
-      <article className="grid min-h-0 grid-rows-[48px_minmax(0,1fr)] bg-[#040d15]">
-        <div className="flex items-center justify-between border-b border-cyan-400/15 px-4">
-          <p className="mission-mono text-[11px] uppercase tracking-[0.34em] text-cyan-300/70">
-            console
-          </p>
-          <span className="mission-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-            runtime feedback
-          </span>
-        </div>
+    <section
+      className="grid min-h-0 grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-px"
+      style={{ background: "var(--panel-separator)" }}
+    >
+      {/* Console */}
+      <article
+        className="grid min-h-0 grid-rows-[42px_minmax(0,1fr)]"
+        style={{ background: "var(--panel-bg)" }}
+      >
+        <PanelHeader title="Console" subtitle="runtime feedback" />
 
-        <div className="mission-mono min-h-0 overflow-auto px-4 py-3 text-[12px] leading-7 text-emerald-200">
+        <div className="mission-mono min-h-0 overflow-auto px-4 py-3 text-[11px] leading-[1.9]" style={{ color: "rgba(100,200,140,0.75)" }}>
           {world.consoleLines.map((line) => (
-            <p key={line}>{line}</p>
+            <p key={line}>
+              <span style={{ color: "rgba(52,160,100,0.5)" }} aria-hidden>{">"}&nbsp;</span>
+              {line}
+            </p>
           ))}
         </div>
       </article>
 
-      <article className="grid min-h-0 grid-rows-[48px_minmax(0,1fr)] bg-[#061019]">
-        <div className="flex items-center justify-between border-b border-cyan-400/15 px-4">
-          <p className="mission-mono text-[11px] uppercase tracking-[0.34em] text-cyan-300/70">
-            timeline
-          </p>
-          <span className="mission-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-            execution trace
-          </span>
-        </div>
+      {/* Timeline */}
+      <article
+        className="grid min-h-0 grid-rows-[42px_minmax(0,1fr)]"
+        style={{ background: "var(--panel-bg-alt)" }}
+      >
+        <PanelHeader title="Timeline" subtitle="execution trace" />
 
-        <div className="min-h-0 overflow-auto p-3">
-          <div className="grid gap-[1px] bg-cyan-400/10">
+        <div className="min-h-0 overflow-auto p-2.5">
+          <div className="grid gap-px" style={{ background: "var(--cold-border)" }}>
             {world.timeline.map((entry) => (
               <div
-                key={entry.tick}
-                className="grid grid-cols-[88px_minmax(0,1fr)] items-center bg-[#040d15] px-4 py-3"
+                key={`${entry.tick}-${entry.label}`}
+                className="relative grid grid-cols-[72px_minmax(0,1fr)] items-center overflow-hidden px-4 py-2 transition-colors"
+                style={{ background: "var(--panel-bg)" }}
               >
-                <span className="mission-mono text-[10px] uppercase tracking-[0.24em] text-slate-500">
-                  tick {entry.tick}
+                <div
+                  className="pointer-events-none absolute inset-y-0 left-0 w-0.5"
+                  style={{ background: "rgba(55,120,170,0.2)" }}
+                />
+                <span className="mission-mono text-[9px] uppercase tracking-[0.26em] text-slate-700">
+                  {entry.tick.toString().padStart(4, "0")}
                 </span>
-                <span className="text-sm uppercase tracking-[0.14em] text-slate-100">
+                <span className="text-[13px] font-medium uppercase tracking-widest text-slate-300">
                   {entry.label}
                 </span>
               </div>

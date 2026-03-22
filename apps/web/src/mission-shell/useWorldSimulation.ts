@@ -1,32 +1,99 @@
-import { useEffect, useReducer } from "react";
-import { createInitialWorldState, worldReducer } from "./simulation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { client, type MissionWorldSnapshot } from "../rivet";
+import { missionCode } from "./data";
+import { createInitialActorWorldState, mapActorSnapshotToWorld, PLAYER_ID } from "./actorWorld";
+import type { WorldState } from "./simulation";
 
+const SESSION_ID = "solo-mission";
 const STEP_INTERVAL_MS = 450;
 
 export function useWorldSimulation() {
-  const [world, dispatch] = useReducer(worldReducer, undefined, createInitialWorldState);
+  const [world, setWorld] = useState(createInitialActorWorldState);
+  const [isReady, setIsReady] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const bootstrappedRef = useRef(false);
+
+  const systemActor = useMemo(() => client.system.getOrCreate([SESSION_ID]), []);
+  const playerActor = useMemo(() => client.player.getOrCreate([SESSION_ID, PLAYER_ID]), []);
+  const worldActor = useMemo(() => client.world.getOrCreate([SESSION_ID]), []);
+
+  const applySnapshot = useCallback((snapshot: MissionWorldSnapshot) => {
+    setWorld(mapActorSnapshotToWorld(snapshot));
+    setIsReady(true);
+  }, []);
 
   useEffect(() => {
-    if (world.runState !== "running") {
+    if (bootstrappedRef.current) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function bootstrap() {
+      bootstrappedRef.current = true;
+
+      await systemActor.bootstrapSoloSession({
+        playerId: PLAYER_ID,
+        displayName: "Player ALPHA",
+        droneIds: ["drone_01"],
+        tickTimeoutMs: STEP_INTERVAL_MS,
+      });
+
+      await playerActor.updateDroneScript("drone_01", missionCode);
+      const snapshot = (await worldActor.getSnapshot()) as MissionWorldSnapshot;
+
+      if (!cancelled) {
+        applySnapshot(snapshot);
+      }
+    }
+
+    void bootstrap();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applySnapshot, playerActor, systemActor, worldActor]);
+
+  useEffect(() => {
+    if (!isReady || !isRunning) {
       return undefined;
     }
 
+    let cancelled = false;
+
     const intervalId = window.setInterval(() => {
-      dispatch({ type: "step" });
-      dispatch({ type: "play" });
+      void worldActor.runTick().then((snapshot) => {
+        if (!cancelled) {
+          applySnapshot(snapshot as MissionWorldSnapshot);
+        }
+      });
     }, STEP_INTERVAL_MS);
 
     return () => {
+      cancelled = true;
       window.clearInterval(intervalId);
     };
-  }, [world.runState]);
+  }, [applySnapshot, isReady, isRunning, worldActor]);
+
+  const displayWorld: WorldState = {
+    ...world,
+    runState: isRunning ? "running" : "paused",
+  };
 
   return {
-    world,
-    play: () => dispatch({ type: "play" }),
-    pause: () => dispatch({ type: "pause" }),
-    reset: () => dispatch({ type: "reset" }),
-    step: () => dispatch({ type: "step" }),
-    toggleRun: () => dispatch({ type: "toggle-run" }),
+    world: displayWorld,
+    isReady,
+    reset: async () => {
+      setIsRunning(false);
+      applySnapshot((await worldActor.resetWorld()) as MissionWorldSnapshot);
+    },
+    step: async () => {
+      setIsRunning(false);
+      applySnapshot((await worldActor.runTick()) as MissionWorldSnapshot);
+    },
+    toggleRun: () => {
+      if (!isReady) return;
+      setIsRunning((value) => !value);
+    },
   };
 }
