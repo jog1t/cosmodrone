@@ -9,9 +9,11 @@
     "lint": "pnpm --filter web lint && pnpm --filter server lint",
     "format": "pnpm --filter web format && pnpm --filter server format",
     "test": "pnpm --filter web test && pnpm --filter server test",
-    "check": "pnpm lint && pnpm build"
+    "check": "pnpm lint && pnpm build",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7"
   }
 }
