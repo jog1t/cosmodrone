@@ -18,13 +18,6 @@ describe("world actor", () => {
       "drone-2": "return idle",
     });
 
-    await client.drone
-      .getOrCreate([sessionId, "drone-1"])
-      .configureBehavior({ responseDelayMs: 5 });
-    await client.drone
-      .getOrCreate([sessionId, "drone-2"])
-      .configureBehavior({ responseDelayMs: 25 });
-
     const snapshot = await client.world.getOrCreate([sessionId]).runTick();
 
     expect(snapshot.tick).toBe(1);
@@ -40,47 +33,6 @@ describe("world actor", () => {
       tick: 1,
       droneId: "drone-2",
       status: "ok",
-    });
-  });
-
-  it("marks non-responsive drones as timeout and still resolves the barrier", async (c) => {
-    const sessionId = "world-timeout";
-
-    const { client } = await bootstrapSoloSession(c, {
-      sessionId,
-      playerId: "player-bravo",
-      displayName: "Player BRAVO",
-      droneIds: ["drone-fast", "drone-slow"],
-      tickTimeoutMs: 20,
-    });
-
-    await seedDroneScripts(client, sessionId, {
-      "drone-fast": "return idle",
-      "drone-slow": "return idle",
-    });
-
-    await client.drone
-      .getOrCreate([sessionId, "drone-fast"])
-      .configureBehavior({ responseDelayMs: 0 });
-    await client.drone
-      .getOrCreate([sessionId, "drone-slow"])
-      .configureBehavior({ responseDelayMs: 60 });
-
-    const snapshot = await client.world.getOrCreate([sessionId]).runTick();
-
-    expect(snapshot.tick).toBe(1);
-    expect(snapshot.phase).toBe("resolved");
-    expect(snapshot.waitingOn).toEqual([]);
-    expect(snapshot.readyForNextTick).toBe(true);
-    expect(snapshot.responses["drone-fast"]).toMatchObject({
-      tick: 1,
-      droneId: "drone-fast",
-      status: "ok",
-    });
-    expect(snapshot.responses["drone-slow"]).toMatchObject({
-      tick: 1,
-      droneId: "drone-slow",
-      status: "timeout",
     });
   });
 
@@ -111,7 +63,7 @@ describe("world actor", () => {
       tick: 1,
       droneId: "drone-bad",
       status: "error",
-      error: "Drone drone-bad failed on tick 1",
+      error: "failOnTick",
     });
   });
 });

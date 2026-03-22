@@ -22,7 +22,6 @@ export function getMissionDroneSnapshot(state: MissionDroneState): MissionDroneS
     droneId: state.droneId,
     playerId: state.playerId,
     script: state.script,
-    responseDelayMs: state.responseDelayMs,
     failOnTick: state.failOnTick,
     lastRequestedTick: state.lastRequestedTick,
     lastCompletedTick: state.lastCompletedTick,

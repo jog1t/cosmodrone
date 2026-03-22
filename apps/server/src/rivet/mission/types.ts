@@ -5,7 +5,6 @@ export type DroneTickResponse = {
   droneId: string;
   status: "ok" | "idle" | "error" | "timeout";
   intent: DroneIntent | null;
-  logs: string[];
   error: string | null;
   memory: {
     lastCompletedTick: number;
@@ -26,7 +25,6 @@ export type MissionDroneState = {
   droneId: string;
   playerId: string;
   script: string;
-  responseDelayMs: number;
   failOnTick: number | null;
   lastRequestedTick: number;
   lastCompletedTick: number;
@@ -61,7 +59,6 @@ export type MissionDroneSnapshot = {
   droneId: string;
   playerId: string;
   script: string;
-  responseDelayMs: number;
   failOnTick: number | null;
   lastRequestedTick: number;
   lastCompletedTick: number;

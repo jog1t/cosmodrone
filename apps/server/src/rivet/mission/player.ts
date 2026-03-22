@@ -12,16 +12,12 @@ export const player = actor({
     displayName: "",
     droneIds: [] as string[],
   },
+  onCreate(c, input: { playerId: string; displayName: string; droneIds: string[] }) {
+    c.state.playerId = input.playerId;
+    c.state.displayName = input.displayName;
+    c.state.droneIds = [...input.droneIds];
+  },
   actions: {
-    configurePlayer: (
-      c,
-      input: { playerId: string; displayName: string; droneIds: string[] },
-    ): MissionPlayerSnapshot => {
-      c.state.playerId = input.playerId;
-      c.state.displayName = input.displayName;
-      c.state.droneIds = [...input.droneIds];
-      return getMissionPlayerSnapshot(c.state);
-    },
     getSnapshot: (c): MissionPlayerSnapshot => getMissionPlayerSnapshot(c.state),
   },
 });

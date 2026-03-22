@@ -1,4 +1,4 @@
-import { actor, event } from "rivetkit";
+import { UserError, actor, event } from "rivetkit";
 import type { registry } from "../actors";
 import { collectDroneResponse } from "./helpers";
 import { getMissionWorldSnapshot } from "./snapshots";
@@ -25,24 +25,14 @@ export const world = actor({
     waitingOn: [] as string[],
     responses: {} as Record<string, DroneTickResponse>,
   },
+  onCreate(c, input: { droneIds: string[]; tickTimeoutMs?: number }) {
+    c.state.droneIds = [...input.droneIds];
+    c.state.tickTimeoutMs = input.tickTimeoutMs ?? DEFAULT_TICK_TIMEOUT_MS;
+  },
   actions: {
-    configureWorld: (
-      c,
-      input: { droneIds: string[]; tickTimeoutMs?: number },
-    ): MissionWorldSnapshot => {
-      c.state.droneIds = [...input.droneIds];
-      c.state.tickTimeoutMs = input.tickTimeoutMs ?? c.state.tickTimeoutMs;
-      c.state.phase = "idle";
-      c.state.waitingOn = [];
-      c.state.responses = {};
-      c.state.tick = 0;
-      const snapshot = getMissionWorldSnapshot(c.state);
-      c.broadcast("snapshot", snapshot);
-      return snapshot;
-    },
     runTick: async (c): Promise<MissionWorldSnapshot> => {
       if (c.state.phase === "awaiting_drones") {
-        throw new Error("World is already waiting for drone responses");
+        throw new UserError("World is already waiting for drone responses");
       }
 
       const nextTick = c.state.tick + 1;

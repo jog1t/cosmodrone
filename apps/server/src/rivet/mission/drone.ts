@@ -1,5 +1,4 @@
 import { actor } from "rivetkit";
-import { sleep } from "./helpers";
 import { getMissionDroneSnapshot } from "./snapshots";
 import type { DroneTickResponse } from "./types";
 
@@ -12,7 +11,6 @@ export const drone = actor({
     droneId: "",
     playerId: "",
     script: "",
-    responseDelayMs: 0,
     failOnTick: null as number | null,
     lastRequestedTick: 0,
     lastCompletedTick: 0,
@@ -23,28 +21,18 @@ export const drone = actor({
     c.state.playerId = input.playerId;
   },
   actions: {
-    configureBehavior: (c, next: { responseDelayMs?: number; failOnTick?: number | null }) => {
-      if (next.responseDelayMs !== undefined) {
-        c.state.responseDelayMs = Math.max(0, next.responseDelayMs);
-      }
-
+    configureBehavior: (c, next: { failOnTick?: number | null }) => {
       if (next.failOnTick !== undefined) {
         c.state.failOnTick = next.failOnTick;
       }
-
       return getMissionDroneSnapshot(c.state);
     },
     updateScript: (c, script: string) => {
       c.state.script = script;
       return getMissionDroneSnapshot(c.state);
     },
-    runTick: async (c, input: { tick: number }): Promise<DroneTickResponse> => {
+    runTick: (c, input: { tick: number }): DroneTickResponse => {
       c.state.lastRequestedTick = input.tick;
-
-      if (c.state.responseDelayMs > 0) {
-        await sleep(c.state.responseDelayMs);
-      }
-
       c.state.lastCompletedTick = input.tick;
 
       if (c.state.failOnTick === input.tick) {
@@ -55,8 +43,7 @@ export const drone = actor({
           droneId: c.state.droneId,
           status: "error",
           intent: null,
-          logs: [`[${input.tick}] ${c.state.droneId} :: runtime failure`],
-          error: `Drone ${c.state.droneId} failed on tick ${input.tick}`,
+          error: "failOnTick",
           memory: {
             lastCompletedTick: input.tick,
           },
@@ -71,7 +58,6 @@ export const drone = actor({
         droneId: c.state.droneId,
         status: isConfigured ? "ok" : "idle",
         intent: isConfigured ? { type: "idle" } : null,
-        logs: [`[${input.tick}] ${c.state.droneId} :: ready for next tick`],
         error: null,
         memory: {
           lastCompletedTick: input.tick,

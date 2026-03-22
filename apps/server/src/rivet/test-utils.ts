@@ -21,12 +21,16 @@ export async function createMissionTestClient(c: TestContextLike) {
 export async function bootstrapSoloSession(c: TestContextLike, options: BootstrapOptions) {
   const client = await createMissionTestClient(c);
 
-  const systemSnapshot = await client.system.getOrCreate([options.sessionId]).bootstrapSoloSession({
-    playerId: options.playerId,
-    displayName: options.displayName,
-    droneIds: options.droneIds,
-    tickTimeoutMs: options.tickTimeoutMs,
-  });
+  const systemSnapshot = await client.system
+    .getOrCreate([options.sessionId], {
+      createWithInput: {
+        playerId: options.playerId,
+        displayName: options.displayName,
+        droneIds: options.droneIds,
+        tickTimeoutMs: options.tickTimeoutMs,
+      },
+    })
+    .getSnapshot();
 
   return {
     client,
