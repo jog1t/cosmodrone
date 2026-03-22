@@ -1,55 +1,62 @@
-import { useRef } from "react";
-import { droneLabels, mapStatusLabels } from "./data";
+import { useRef, useState } from "react";
 import { useMissionMapCanvas } from "./useMissionMapCanvas";
+import type { SimulationStatus } from "./useWorldSimulation";
 
-export function MapPanel() {
+type MapPanelProps = {
+  status: SimulationStatus;
+};
+
+export function MapPanel({ status }: MapPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [senseActive, setSenseActive] = useState(false);
+  const [trailActive, setTrailActive] = useState(false);
 
   useMissionMapCanvas(canvasRef);
 
   return (
-    <section className="grid min-h-0 grid-rows-[minmax(0,1fr)] bg-[#040d15]">
-      <article className="grid min-h-0 grid-rows-[48px_minmax(0,1fr)] bg-[#040d15]">
-        <div className="flex items-center justify-between border-b border-cyan-400/15 px-4">
-          <p className="mission-mono text-[11px] uppercase tracking-[0.34em] text-cyan-300/70">
-            map renderer
-          </p>
-          <div className="mission-mono flex gap-4 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-            <span>base aurora</span>
-            <span>3 drones</span>
-            <span>4 ore nodes</span>
-          </div>
-        </div>
+    <section className="flex flex-col bg-bg border-r border-border overflow-hidden">
+      {/* Map toolbar */}
+      <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-border bg-bg-2 shrink-0">
+        <span className="font-mono uppercase tracking-widest text-text-3 font-medium fz-2xs">
+          map
+        </span>
+        <div className="flex-1" />
+        <LayerButton label="sense" active={senseActive} onClick={() => setSenseActive((v) => !v)} />
+        <LayerButton label="trail" active={trailActive} onClick={() => setTrailActive((v) => !v)} />
+      </div>
 
-        <div className="relative min-h-0 p-3">
-          <canvas
-            ref={canvasRef}
-            className="h-full w-full border border-cyan-400/15 bg-[#02070d]"
-          />
+      {/* Canvas area */}
+      <div className="flex-1 relative overflow-hidden">
+        <canvas ref={canvasRef} className="block w-full h-full" />
 
-          <div className="pointer-events-none absolute left-6 top-6 grid gap-2">
-            {mapStatusLabels.map((label) => (
-              <div
-                key={label}
-                className="mission-mono border border-cyan-400/15 bg-[#03111b]/95 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-cyan-100"
-              >
-                {label}
-              </div>
-            ))}
-          </div>
-
-          <div className="pointer-events-none absolute bottom-6 left-6 flex gap-2">
-            {droneLabels.map(([code, label]) => (
-              <div
-                key={code}
-                className="mission-mono border border-cyan-400/15 bg-[#03111b]/95 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-cyan-100"
-              >
-                {code} :: {label}
-              </div>
-            ))}
-          </div>
-        </div>
-      </article>
+        {/* Failure vignette overlay */}
+        <div
+          className={`absolute inset-0 pointer-events-none transition-all duration-400 ${
+            status === "failed" ? "bg-[rgba(10,6,6,0.45)]" : "bg-transparent"
+          }`}
+        />
+      </div>
     </section>
+  );
+}
+
+function LayerButton({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`font-mono px-1.5 py-0.5 rounded-sm border cursor-pointer transition-all duration-100 fz-2xs ${
+        active ? "border-teal text-teal bg-teal-dim" : "border-border text-text-3 bg-transparent"
+      }`}
+    >
+      {label}
+    </button>
   );
 }

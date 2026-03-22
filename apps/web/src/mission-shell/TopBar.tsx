@@ -1,14 +1,9 @@
-import { commandShortcuts } from "./data";
 import type { SimulationStatus } from "./useWorldSimulation";
-import { ToggleButton } from "./ToggleButton";
 
 type TopBarProps = {
-  showAssembler: boolean;
-  showInspector: boolean;
-  toggleAssembler: () => void;
-  toggleInspector: () => void;
   tick: string;
   status: SimulationStatus;
+  objective: string;
   isRunning: boolean;
   onRun: () => void;
   onPause: () => void;
@@ -16,103 +11,89 @@ type TopBarProps = {
 };
 
 const STATUS_LABEL: Record<SimulationStatus, string> = {
-  idle: "Idle",
-  running: "Running",
-  failed: "Failed",
+  idle: "IDLE",
+  running: "RUNNING",
+  failed: "FAILED",
 };
 
 export function TopBar({
-  showAssembler,
-  showInspector,
-  toggleAssembler,
-  toggleInspector,
   tick,
   status,
+  objective,
   isRunning,
   onRun,
   onPause,
   onReset,
 }: TopBarProps) {
-  const objectiveStats = [
-    { label: "Objective", value: "Deliver 15 ore" },
-    { label: "Tick", value: tick },
-    { label: "Status", value: STATUS_LABEL[status] },
-    { label: "Failure", value: status === "failed" ? "Yes" : "None" },
-  ];
+  return (
+    <header className="flex items-center shrink-0 gap-3.5 px-3.5 py-2 border-b border-border bg-bg-2 select-none">
+      {/* Level name */}
+      <span className="font-mono whitespace-nowrap text-text-2 fz-sm">
+        level-01 / <span className="font-medium text-text">First Loop</span>
+      </span>
+
+      {/* Objective ghost text */}
+      <span className="font-mono whitespace-nowrap text-text-3 fz-xs">{objective}</span>
+
+      <div className="flex-1" />
+
+      {/* Tick counter */}
+      <span className="font-mono text-text-2 flex items-center gap-1.5 fz-sm">
+        tick <span className="font-medium text-text min-w-9">{tick}</span>
+      </span>
+
+      {/* Status badge */}
+      <StatusBadge status={status} label={STATUS_LABEL[status]} />
+
+      {/* Separator */}
+      <div className="w-px h-3.5 bg-border-2 shrink-0" />
+
+      {/* RUN / PAUSE morph button */}
+      <button
+        onClick={isRunning ? onPause : onRun}
+        className="flex items-center gap-1.5 border border-teal rounded font-mono font-semibold tracking-wider px-3 py-1 cursor-pointer whitespace-nowrap transition-all duration-150 fz-xs text-teal bg-teal-dim shadow-teal-glow"
+      >
+        {isRunning ? (
+          <svg width={8} height={8} viewBox="0 0 8 8" fill="currentColor">
+            <rect x={0} y={0} width={3} height={8} />
+            <rect x={5} y={0} width={3} height={8} />
+          </svg>
+        ) : (
+          <svg width={8} height={8} viewBox="0 0 8 8" fill="currentColor">
+            <polygon points="0,0 8,4 0,8" />
+          </svg>
+        )}
+        {isRunning ? "PAUSE" : "RUN"}
+      </button>
+
+      {/* Reset button */}
+      <button
+        onClick={onReset}
+        className="flex items-center gap-1 border border-border-2 rounded text-text-2 px-2.5 py-1 cursor-pointer whitespace-nowrap transition-all duration-150 fz-xs"
+      >
+        ↺ Reset
+      </button>
+    </header>
+  );
+}
+
+function StatusBadge({ status, label }: { status: SimulationStatus; label: string }) {
+  const borderClass =
+    status === "running"
+      ? "border-teal/30"
+      : status === "failed"
+        ? "border-red/30"
+        : "border-border";
+  const bgClass =
+    status === "running" ? "bg-teal-dim" : status === "failed" ? "bg-red-dim" : "bg-bg-4";
+  const colorClass =
+    status === "running" ? "text-teal" : status === "failed" ? "text-red" : "text-text-3";
 
   return (
-    <header className="grid min-h-0 grid-cols-[minmax(0,1fr)_minmax(520px,630px)] gap-[1px] bg-[#061019]">
-      <div className="grid min-w-0 grid-cols-[minmax(300px,1fr)_minmax(420px,630px)] items-center gap-6 bg-[linear-gradient(180deg,#07131d_0%,#041019_100%)] px-5">
-        <div className="min-w-0 pr-4">
-          <p className="mission-mono text-[11px] uppercase tracking-[0.4em] text-cyan-300/70">
-            cosmodrone :: level-01 :: terminal shell
-          </p>
-          <h1 className="mt-2 truncate text-2xl font-semibold uppercase tracking-[0.18em] text-slate-100">
-            First loop command deck
-          </h1>
-        </div>
-
-        <div className="grid min-w-0 grid-cols-4 gap-[1px] border border-cyan-400/20 bg-cyan-400/10">
-          {objectiveStats.map((item) => (
-            <article key={item.label} className="bg-[#05111a] px-3 py-3">
-              <p className="mission-mono text-[10px] uppercase tracking-[0.28em] text-slate-500">
-                {item.label}
-              </p>
-              <p className="mt-2 text-sm uppercase tracking-[0.16em] text-cyan-100">{item.value}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid min-w-0 grid-cols-5 gap-[1px] bg-cyan-400/10 p-[1px]">
-        <ToggleButton
-          active={showInspector}
-          command="tab"
-          label="inspector"
-          onClick={toggleInspector}
-        />
-        <ToggleButton
-          active={showAssembler}
-          command="shift+a"
-          label="assembler"
-          onClick={toggleAssembler}
-        />
-        <button
-          className="flex min-w-0 cursor-pointer items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
-          onClick={isRunning ? onPause : onRun}
-        >
-          <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-            space
-          </span>
-          <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">
-            {isRunning ? "pause" : "run"}
-          </span>
-        </button>
-        <button
-          className="flex min-w-0 cursor-pointer items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
-          onClick={onReset}
-        >
-          <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-            ctrl+r
-          </span>
-          <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">reset</span>
-        </button>
-        {commandShortcuts
-          .filter((item) => item.command !== "ctrl+r" && item.command !== "space")
-          .map((item) => (
-            <div
-              key={item.command}
-              className="flex min-w-0 items-center justify-between gap-3 bg-[#05111a] px-4 py-4"
-            >
-              <span className="mission-mono shrink-0 text-[10px] uppercase tracking-[0.24em] text-slate-500">
-                {item.command}
-              </span>
-              <span className="truncate text-sm uppercase tracking-[0.14em] text-slate-200">
-                {item.label}
-              </span>
-            </div>
-          ))}
-      </div>
-    </header>
+    <span
+      className={`font-mono tracking-widest px-1.5 py-0.5 rounded-sm border transition-all duration-300 fz-2xs ${borderClass} ${bgClass} ${colorClass}`}
+    >
+      {label}
+    </span>
   );
 }
