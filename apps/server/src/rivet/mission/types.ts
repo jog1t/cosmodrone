@@ -1,5 +1,12 @@
 export type MissionWorldPhase = "idle" | "awaiting_drones" | "resolved";
 
+export type Vec2 = { x: number; y: number };
+
+export type DroneIntent =
+  | { type: "idle" }
+  | { type: "move"; target: Vec2 } // normalised 0..1 target position
+  | { type: "mine" }; // stay in place and extract ore
+
 export type DroneTickResponse = {
   tick: number;
   droneId: string;
@@ -9,10 +16,6 @@ export type DroneTickResponse = {
   memory: {
     lastCompletedTick: number;
   };
-};
-
-export type DroneIntent = {
-  type: "idle";
 };
 
 export type MissionPlayerState = {
@@ -30,6 +33,28 @@ export type MissionDroneState = {
   lastResponseStatus: DroneTickResponse["status"];
 };
 
+export type EntityVisibility = "sense" | "memory" | "fog";
+
+export type DroneWorldState = {
+  droneId: string;
+  position: Vec2; // normalised 0..1 relative to canvas
+  senseRadius: number; // in normalised units (matching canvas)
+};
+
+export type OreNodeVisibility = {
+  nodeIndex: number; // index into the ORE_REL array
+  visibility: EntityVisibility;
+};
+
+export type DepositVisibilitySnapshot = {
+  depositId: string;
+  nodes: OreNodeVisibility[]; // per-node visibility
+};
+
+export type WorldVisibilitySnapshot = {
+  deposits: DepositVisibilitySnapshot[];
+};
+
 export type MissionWorldState = {
   tick: number;
   phase: MissionWorldPhase;
@@ -37,6 +62,11 @@ export type MissionWorldState = {
   droneIds: string[];
   waitingOn: string[];
   responses: Record<string, DroneTickResponse>;
+  drones: Record<string, DroneWorldState>;
+  visibility: {
+    // per deposit → per node: last known visibility state
+    deposits: Record<string, { nodes: EntityVisibility[] }>;
+  };
 };
 
 export type MissionSystemState = {
@@ -72,6 +102,8 @@ export type MissionWorldSnapshot = {
   waitingOn: string[];
   responses: Record<string, DroneTickResponse>;
   readyForNextTick: boolean;
+  drones: Record<string, DroneWorldState>;
+  visibility: WorldVisibilitySnapshot;
 };
 
 export type MissionSystemSnapshot = MissionSystemState;

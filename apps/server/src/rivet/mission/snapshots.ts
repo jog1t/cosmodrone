@@ -7,6 +7,7 @@ import type {
   MissionSystemState,
   MissionWorldSnapshot,
   MissionWorldState,
+  WorldVisibilitySnapshot,
 } from "./types";
 
 export function getMissionPlayerSnapshot(state: MissionPlayerState): MissionPlayerSnapshot {
@@ -30,6 +31,13 @@ export function getMissionDroneSnapshot(state: MissionDroneState): MissionDroneS
 }
 
 export function getMissionWorldSnapshot(state: MissionWorldState): MissionWorldSnapshot {
+  const visibility: WorldVisibilitySnapshot = {
+    deposits: Object.entries(state.visibility.deposits).map(([id, v]) => ({
+      depositId: id,
+      nodes: v.nodes.map((vis, nodeIndex) => ({ nodeIndex, visibility: vis })),
+    })),
+  };
+
   return {
     tick: state.tick,
     phase: state.phase,
@@ -38,6 +46,8 @@ export function getMissionWorldSnapshot(state: MissionWorldState): MissionWorldS
     waitingOn: [...state.waitingOn],
     responses: { ...state.responses },
     readyForNextTick: state.phase !== "awaiting_drones" && state.waitingOn.length === 0,
+    drones: { ...state.drones },
+    visibility,
   };
 }
 

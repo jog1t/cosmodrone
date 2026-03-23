@@ -19,7 +19,7 @@ describe("cross-actor flow", () => {
       droneIds: ["drone-a", "drone-b"],
     });
 
-    expect(await client.world.getOrCreate([sessionId]).getSnapshot()).toEqual({
+    expect(await client.world.getOrCreate([sessionId]).getSnapshot()).toMatchObject({
       tick: 0,
       phase: "idle",
       tickTimeoutMs: 35,

@@ -10,4 +10,7 @@ export const registry = setup({
     system,
     world,
   },
+  inspector: {
+    enabled: true,
+  },
 });

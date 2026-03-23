@@ -15,8 +15,6 @@ describe("App", () => {
 
     // Map panel
     expect(screen.getByText(/^map$/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /sense/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /trail/i })).toBeInTheDocument();
 
     // Right panel
     expect(screen.getByRole("button", { name: /MINER/i })).toBeInTheDocument();

@@ -1,6 +1,6 @@
 import { actor } from "rivetkit";
 import { getMissionDroneSnapshot } from "./snapshots";
-import type { DroneTickResponse } from "./types";
+import type { DroneIntent, DroneTickResponse } from "./types";
 
 export const drone = actor({
   options: {
@@ -28,18 +28,36 @@ export const drone = actor({
       c.state.lastRequestedTick = input.tick;
       c.state.lastCompletedTick = input.tick;
 
-      const isConfigured = c.state.script.trim().length > 0;
-      c.state.lastResponseStatus = isConfigured ? "ok" : "idle";
+      const raw = c.state.script.trim();
+      if (!raw) {
+        c.state.lastResponseStatus = "idle";
+        return {
+          tick: input.tick,
+          droneId: c.state.droneId,
+          status: "idle",
+          intent: null,
+          error: null,
+          memory: { lastCompletedTick: input.tick },
+        };
+      }
 
+      let intent: DroneIntent = { type: "idle" };
+      let error: string | null = null;
+      try {
+        const parsed = JSON.parse(raw) as DroneIntent;
+        intent = parsed;
+      } catch {
+        error = "Script is not valid JSON";
+      }
+
+      c.state.lastResponseStatus = error ? "error" : "ok";
       return {
         tick: input.tick,
         droneId: c.state.droneId,
-        status: isConfigured ? "ok" : "idle",
-        intent: isConfigured ? { type: "idle" } : null,
-        error: null,
-        memory: {
-          lastCompletedTick: input.tick,
-        },
+        status: error ? "error" : "ok",
+        intent: error ? null : intent,
+        error,
+        memory: { lastCompletedTick: input.tick },
       };
     },
     getSnapshot: (c) => getMissionDroneSnapshot(c.state),

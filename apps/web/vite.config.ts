@@ -6,8 +6,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      "/api/rivet": "http://localhost:6420",
-      "/health": "http://localhost:6420",
+      "/api/rivet": "http://localhost:8080",
     },
   },
 });

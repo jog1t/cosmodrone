@@ -1,17 +1,17 @@
-import { useRef, useState } from "react";
-import { useMissionMapCanvas } from "./useMissionMapCanvas";
+import { Application } from "@pixi/react";
+import { useRef } from "react";
+import type { DepositUiVisibility, DroneUiState } from "./actorWorld";
+import { MapPixiScene } from "./MapPixiScene";
 import type { SimulationStatus } from "./useWorldSimulation";
 
 type MapPanelProps = {
   status: SimulationStatus;
+  depositVisibility: DepositUiVisibility[];
+  drones: Record<string, DroneUiState>;
 };
 
-export function MapPanel({ status }: MapPanelProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [senseActive, setSenseActive] = useState(false);
-  const [trailActive, setTrailActive] = useState(false);
-
-  useMissionMapCanvas(canvasRef);
+export function MapPanel({ status, depositVisibility, drones }: MapPanelProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <section className="flex flex-col bg-bg border-r border-border overflow-hidden">
@@ -20,14 +20,24 @@ export function MapPanel({ status }: MapPanelProps) {
         <span className="font-mono uppercase tracking-widest text-text-3 font-medium fz-2xs">
           map
         </span>
-        <div className="flex-1" />
-        <LayerButton label="sense" active={senseActive} onClick={() => setSenseActive((v) => !v)} />
-        <LayerButton label="trail" active={trailActive} onClick={() => setTrailActive((v) => !v)} />
       </div>
 
       {/* Canvas area */}
-      <div className="flex-1 relative overflow-hidden">
-        <canvas ref={canvasRef} className="block w-full h-full" />
+      <div ref={containerRef} className="flex-1 relative overflow-hidden">
+        <Application
+          className="block w-full h-full"
+          resizeTo={containerRef}
+          backgroundColor={0x02070d}
+          antialias
+          autoDensity
+          resolution={window.devicePixelRatio || 1}
+        >
+          <MapPixiSceneWrapper
+            containerRef={containerRef}
+            depositVisibility={depositVisibility}
+            drones={drones}
+          />
+        </Application>
 
         {/* Failure vignette overlay */}
         <div
@@ -40,23 +50,32 @@ export function MapPanel({ status }: MapPanelProps) {
   );
 }
 
-function LayerButton({
-  label,
-  active,
-  onClick,
+function MapPixiSceneWrapper({
+  containerRef,
+  depositVisibility,
+  drones,
 }: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  depositVisibility: DepositUiVisibility[];
+  drones: Record<string, DroneUiState>;
 }) {
+  const el = containerRef.current;
+  const width = el?.clientWidth ?? 600;
+  const height = el?.clientHeight ?? 400;
+
+  const depositVis = depositVisibility.find((d) => d.depositId === "ore_cluster_a1") ?? {
+    depositId: "ore_cluster_a1",
+    nodes: [],
+  };
+
   return (
-    <button
-      onClick={onClick}
-      className={`font-mono px-1.5 py-0.5 rounded-sm border cursor-pointer transition-all duration-100 fz-2xs ${
-        active ? "border-teal text-teal bg-teal-dim" : "border-border text-text-3 bg-transparent"
-      }`}
-    >
-      {label}
-    </button>
+    <MapPixiScene
+      width={width}
+      height={height}
+      showSense={true}
+      showTrail={true}
+      depositVisibility={depositVis}
+      drones={Object.values(drones)}
+    />
   );
 }

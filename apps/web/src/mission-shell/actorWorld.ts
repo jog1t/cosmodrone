@@ -7,6 +7,19 @@ import type { SimulationStatus } from "./useWorldSimulation";
 export type DroneUiState = {
   droneId: string;
   status: "ok" | "idle" | "error" | "timeout" | "pending";
+  position: { x: number; y: number };
+  senseRadius: number;
+  color: number;
+};
+
+export type OreNodeUiVisibility = {
+  nodeIndex: number;
+  visibility: "sense" | "memory" | "fog";
+};
+
+export type DepositUiVisibility = {
+  depositId: string;
+  nodes: OreNodeUiVisibility[];
 };
 
 export type WorldUiState = {
@@ -15,9 +28,17 @@ export type WorldUiState = {
   droneIds: string[];
   drones: Record<string, DroneUiState>;
   objective: string;
+  depositVisibility: DepositUiVisibility[];
 };
 
 const OBJECTIVE = "Deliver 15 ore";
+
+// Display colors per drone — visual-only, not stored on server
+const DRONE_COLORS: Record<string, number> = {
+  M1: 0x00cfc0,
+  H1: 0x3dd68c,
+  S1: 0xbe95ff,
+};
 
 function padTick(n: number): string {
   return String(n).padStart(3, "0");
@@ -32,17 +53,22 @@ export function mapSnapshotToUi(
       tick: "000",
       status,
       droneIds: [],
-      drones: {},
+      drones: {} as Record<string, DroneUiState>,
       objective: OBJECTIVE,
+      depositVisibility: [],
     };
   }
 
   const drones: Record<string, DroneUiState> = {};
   for (const droneId of snapshot.droneIds) {
     const response = snapshot.responses[droneId];
+    const worldDrone = snapshot.drones[droneId];
     drones[droneId] = {
       droneId,
       status: response?.status ?? "pending",
+      position: worldDrone?.position ?? { x: 0, y: 0 },
+      senseRadius: worldDrone?.senseRadius ?? 0.12,
+      color: DRONE_COLORS[droneId] ?? 0x94a3b8,
     };
   }
 
@@ -52,5 +78,6 @@ export function mapSnapshotToUi(
     droneIds: snapshot.droneIds,
     drones,
     objective: OBJECTIVE,
+    depositVisibility: snapshot.visibility?.deposits ?? [],
   };
 }

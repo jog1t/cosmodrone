@@ -14,8 +14,8 @@ describe("world actor", () => {
     });
 
     await seedDroneScripts(client, sessionId, {
-      "drone-1": "return idle",
-      "drone-2": "return idle",
+      "drone-1": JSON.stringify({ type: "idle" }),
+      "drone-2": JSON.stringify({ type: "idle" }),
     });
 
     const snapshot = await client.world.getOrCreate([sessionId]).runTick();

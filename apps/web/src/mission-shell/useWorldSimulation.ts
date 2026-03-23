@@ -3,7 +3,6 @@ import { useActor } from "../rivet";
 import type { MissionWorldSnapshot } from "@cosmodrone/server";
 
 const SESSION_ID = "sandbox";
-const DRONE_IDS = ["miner-alpha"];
 const TICK_INTERVAL_MS = 450;
 
 export type SimulationStatus = "idle" | "running" | "failed";
@@ -81,4 +80,4 @@ export function useWorldSimulation(): SimulationState {
   return { snapshot, status, isRunning, start, pause, reset };
 }
 
-export { SESSION_ID, DRONE_IDS };
+export { SESSION_ID };

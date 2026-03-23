@@ -22,7 +22,11 @@ function App() {
       />
 
       <div className="grid-main">
-        <MapPanel status={world.status} />
+        <MapPanel
+          status={world.status}
+          depositVisibility={world.depositVisibility}
+          drones={world.drones}
+        />
         <RightPanel />
       </div>
 
